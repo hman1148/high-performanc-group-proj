@@ -1,7 +1,8 @@
 #include <iostream>
+#include "../models/AlgorithmFactory.h"
 #include <string>
 
-#include "tools/SpotifyFrameReader.h"
+#include "../tools/SpotifyFrameReader.h"
 
 int main()
 {
@@ -12,6 +13,15 @@ int main()
     auto frames = SpotifyGenreRevealParty::SpotifyFrameReader::readCSV(fileName);
 
     std:: cout << "Number of frames: " << frames.size() << std::endl;
+
+    for (int i = 1; i <= 5; i++) {
+        try {
+            std::unique_ptr<IAlgorithm> algorithm = createAlgorithm(i);
+            algorithm->run();
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
 
     return 0;
 }
