@@ -10,7 +10,7 @@
 
 class DistributedCpu : public IAlgorithm {
 public:
-    void run() override {
+    void run(std::vector<std::vector<float>>) override {
         std::cout << "Running Distributed CPU implementation." << std::endl;
     }
 };

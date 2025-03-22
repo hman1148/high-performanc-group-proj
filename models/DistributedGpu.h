@@ -10,7 +10,7 @@
 
 class DistributedGpu : public IAlgorithm {
 public:
-    void run() override {
+    void run(std::vector<std::vector<float>>) override {
         std::cout << "Running Disributed GPU implementation." << std::endl;
     }
 };

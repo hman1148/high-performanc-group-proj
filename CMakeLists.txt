@@ -11,5 +11,6 @@ add_executable(class_project src/main.cpp
         src/SharedGpu.cpp
         src/DistributedCpu.cpp
         src/DistributedGpu.cpp
+        src/SpotifyFrameUtils.cpp
         tools/SpotifyFrameReader.cpp
         tools/SpotifyFrameReader.h)

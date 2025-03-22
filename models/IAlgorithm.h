@@ -5,9 +5,11 @@
 #ifndef IALGORITHM_H
 #define IALGORITHM_H
 
+#include <vector>
+
 class IAlgorithm {
   public:
-    virtual void run() = 0;
+    virtual void run(std::vector<std::vector<float>>) = 0;
     virtual ~IAlgorithm() = default;
 };
 
