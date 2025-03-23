@@ -10,7 +10,7 @@
 
 class DistributedCpu : public IAlgorithm {
 public:
-    void run(std::vector<std::vector<float>>) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t) override {
         std::cout << "Running Distributed CPU implementation." << std::endl;
     }
 };

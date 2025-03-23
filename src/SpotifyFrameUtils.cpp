@@ -23,36 +23,46 @@ namespace SpotifyGenreRevealParty {
         };
     }
 
-    void minMaxScale(std::vector<std::vector<float>>& data) {
-        size_t numFeatures = data[0].size();
-        for (size_t j = 0; j < numFeatures; ++j) {
-            // Find the min and max values for the current feature (column)
-            float minVal = std::numeric_limits<float>::infinity();
-            float maxVal = -std::numeric_limits<float>::infinity();
+    // Updated minMaxScale function to work with a vector of Point objects
+    void minMaxScale(std::vector<Point>& points) {
+        if (points.empty()) {
+            return;  // No points to scale
+        }
 
-            // Loop through all rows to find the min and max for the feature
-            for (const auto& row : data) {
-                minVal = std::min(minVal, row[j]);
-                maxVal = std::max(maxVal, row[j]);
-            }
+        size_t numDimensions = points[0].dimensions.size();
 
-            // Check if min == max, and if so, handle the scaling for this feature
-            if (minVal != maxVal) {
-                // Scale the data for the current feature
-                for (auto& row : data) {
-                    row[j] = (row[j] - minVal) / (maxVal - minVal);
+        // Find the min and max values for each dimension
+        std::vector<float> minValues(numDimensions, std::numeric_limits<float>::infinity());
+        std::vector<float> maxValues(numDimensions, -std::numeric_limits<float>::infinity());
+
+        // Find the min and max values for each dimension
+        for (const auto& point : points) {
+            for (size_t i = 0; i < numDimensions; ++i) {
+                if (point.dimensions[i] < minValues[i]) {
+                    minValues[i] = point.dimensions[i];
                 }
-            } else {
-                // If all values in this column are the same set them to 0
-                for (auto& row : data) {
-                    row[j] = 0.0f;  // or row[j] = 1.0f; if you prefer
+                if (point.dimensions[i] > maxValues[i]) {
+                    maxValues[i] = point.dimensions[i];
+                }
+            }
+        }
+
+        // Scale the dimensions of each point
+        for (auto& point : points) {
+            for (size_t i = 0; i < numDimensions; ++i) {
+                // Avoid division by zero
+                if (maxValues[i] != minValues[i]) {
+                    point.dimensions[i] = (point.dimensions[i] - minValues[i]) / (maxValues[i] - minValues[i]);
+                } else {
+                    point.dimensions[i] = 0.0f;  // If min == max, set to 0 (or handle as a special case if needed)
                 }
             }
         }
     }
 
-    std::vector<std::vector<float>> prepareDataForKMeans(const std::vector<SpotifyFrame>& frames) {
-        std::vector<std::vector<float>> data;
+
+    std::vector<Point> prepareDataForKMeans(const std::vector<SpotifyFrame>& frames) {
+        std::vector<Point> data;
 
         // Extract features from the frames
         for (const auto& frame : frames) {

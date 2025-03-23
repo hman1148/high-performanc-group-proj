@@ -7,9 +7,11 @@
 
 #include <vector>
 
+#include "Point.h"
+
 class IAlgorithm {
   public:
-    virtual void run(std::vector<std::vector<float>>) = 0;
+    virtual void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t) = 0;
     virtual ~IAlgorithm() = default;
 };
 

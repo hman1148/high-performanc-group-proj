@@ -6,11 +6,13 @@
 #include "../models/SpotifyFrame.h"
 #include <vector>
 
+#include "../models/Point.h"
+
 namespace SpotifyGenreRevealParty {
 
     // Function declarations
     std::vector<float> extractFeatures(const SpotifyFrame& frame);
-    void minMaxScale(std::vector<std::vector<float>>& data);
-    std::vector<std::vector<float>> prepareDataForKMeans(const std::vector<SpotifyFrame>& frames);
+    void minMaxScale(std::vector<Point>& data);
+    std::vector<Point> prepareDataForKMeans(const std::vector<SpotifyFrame>& frames);
 
 }  // namespace SpotifyGenreRevealParty
