@@ -8,8 +8,8 @@
 
 int main(int argc, char* argv[]) {
 
-    if (argc != 2) {
-        std::cerr << "Error: Please provide exactly one integer argument for k." << std::endl;
+    if (argc < 2 || argc > 4) {
+        std::cerr << "Error: Please provide 1 to 3 arguments for k, max_iterations, and tolerance" << std::endl;
         return 1;
     }
 
@@ -27,6 +27,46 @@ int main(int argc, char* argv[]) {
     } catch (const std::out_of_range&) {
         std::cerr << "Error: Input out of range for an integer." << std::endl;
         return 1;
+    }
+
+    // Default values
+    int max_iterations = 100; // Default max_iterations
+    double tolerance = 0.0001; // Default tolerance
+
+    // Parse max_iterations if provided (argc == 3 or 4)
+    if (argc >= 3) {
+        try {
+            max_iterations = std::stoi(argv[2]);
+            if (max_iterations <= 0) {
+                std::cerr << "Error: max_iterations must be a positive integer." << std::endl;
+                return 1;
+            }
+            std::cout << "You entered max_iterations = " << max_iterations << std::endl;
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Error: Invalid input. Please provide a valid integer for max_iterations." << std::endl;
+            return 1;
+        } catch (const std::out_of_range&) {
+            std::cerr << "Error: Input out of range for an integer." << std::endl;
+            return 1;
+        }
+    }
+
+    // Parse tolerance if provided (argc == 4)
+    if (argc == 4) {
+        try {
+            tolerance = std::stod(argv[3]);
+            if (tolerance <= 0) {
+                std::cerr << "Error: tolerance must be a positive number." << std::endl;
+                return 1;
+            }
+            std::cout << "You entered tolerance = " << tolerance << std::endl;
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Error: Invalid input. Please provide a valid number for tolerance." << std::endl;
+            return 1;
+        } catch (const std::out_of_range&) {
+            std::cerr << "Error: Input out of range for a double." << std::endl;
+            return 1;
+        }
     }
 
     // Path to your CSV file (relative to working directory)
@@ -75,7 +115,7 @@ int main(int argc, char* argv[]) {
             // Create the algorithm and pass in the prepared data (now as Points)
             const std::unique_ptr<IAlgorithm> algorithm = createAlgorithm(i);
 
-            algorithm->run(points, k, dimension);  // Pass Points instead of raw data
+            algorithm->run(points, k, dimension, max_iterations, tolerance);  // Pass Points instead of raw data
         } catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }

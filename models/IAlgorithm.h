@@ -11,7 +11,11 @@
 
 class IAlgorithm {
   public:
-    virtual void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t) = 0;
+    virtual void run(std::vector<SpotifyGenreRevealParty::Point> data,
+                     int k,
+                     size_t dimensions,
+                     int maxIterations,
+                     double tolerance) = 0;
     virtual ~IAlgorithm() = default;
 };
 

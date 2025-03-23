@@ -10,7 +10,7 @@
 
 class SharedGpu : public IAlgorithm {
 public:
-    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t, int, double) override {
         std::cout << "Running Shared CPU implementation." << std::endl;
     }
 };

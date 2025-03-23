@@ -10,7 +10,7 @@
 
 class DistributedGpu : public IAlgorithm {
 public:
-    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t, int, double) override {
         std::cout << "Running Disributed GPU implementation." << std::endl;
     }
 };
