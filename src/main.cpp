@@ -54,13 +54,13 @@ int main(int argc, char* argv[]) {
     // Output a few of the scaled data points to ensure the data is ready
     std::cout << "Scaled data (first 3 points):" << std::endl;
     for (size_t i = 0; i < std::min(points.size(), static_cast<size_t>(3)); ++i) {
-        for (float j : points[i].dimensions) {
+        for (float j : points[i].features) {
             std::cout << j << " ";
         }
         std::cout << std::endl;
     }
 
-    size_t dimension = points.empty() ? 0 : points[0].dimensions.size();
+    size_t dimension = points.empty() ? 0 : points[0].features.size();
 
     if (dimension == 0) {
         std::cerr << "Error: No data available to determine the vector dimension." << std::endl;

@@ -29,7 +29,7 @@ namespace SpotifyGenreRevealParty {
             return;  // No points to scale
         }
 
-        size_t numDimensions = points[0].dimensions.size();
+        size_t numDimensions = points[0].features.size();
 
         // Find the min and max values for each dimension
         std::vector<float> minValues(numDimensions, std::numeric_limits<float>::infinity());
@@ -38,23 +38,23 @@ namespace SpotifyGenreRevealParty {
         // Find the min and max values for each dimension
         for (const auto& point : points) {
             for (size_t i = 0; i < numDimensions; ++i) {
-                if (point.dimensions[i] < minValues[i]) {
-                    minValues[i] = point.dimensions[i];
+                if (point.features[i] < minValues[i]) {
+                    minValues[i] = point.features[i];
                 }
-                if (point.dimensions[i] > maxValues[i]) {
-                    maxValues[i] = point.dimensions[i];
+                if (point.features[i] > maxValues[i]) {
+                    maxValues[i] = point.features[i];
                 }
             }
         }
 
-        // Scale the dimensions of each point
+        // Scale the features of each point
         for (auto& point : points) {
             for (size_t i = 0; i < numDimensions; ++i) {
                 // Avoid division by zero
                 if (maxValues[i] != minValues[i]) {
-                    point.dimensions[i] = (point.dimensions[i] - minValues[i]) / (maxValues[i] - minValues[i]);
+                    point.features[i] = (point.features[i] - minValues[i]) / (maxValues[i] - minValues[i]);
                 } else {
-                    point.dimensions[i] = 0.0f;  // If min == max, set to 0 (or handle as a special case if needed)
+                    point.features[i] = 0.0f;  // If min == max, set to 0 (or handle as a special case if needed)
                 }
             }
         }
@@ -64,9 +64,10 @@ namespace SpotifyGenreRevealParty {
     std::vector<Point> prepareDataForKMeans(const std::vector<SpotifyFrame>& frames) {
         std::vector<Point> data;
 
-        // Extract features from the frames
+        // Extract features from the frames and wrap them in Point objects
         for (const auto& frame : frames) {
-            data.push_back(extractFeatures(frame));
+            std::vector<float> features = extractFeatures(frame);
+            data.push_back(Point(features));  // Create Point and push it
         }
 
         // Apply min-max scaling to the data
@@ -74,5 +75,6 @@ namespace SpotifyGenreRevealParty {
 
         return data;
     }
+
 
 }  // namespace SpotifyGenreRevealParty
