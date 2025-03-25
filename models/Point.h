@@ -18,7 +18,7 @@ struct Point {
     double minDist;  // default infinite dist to nearest cluster
 
     // Constructor to initialize dimensions and set default clusterId (-1 means no cluster)
-    explicit Point(std::vector<float> dims) : features(std::move(dims)), clusterId(-1), minDist(__DBL_MAX__){}
+    explicit Point(std::vector<float> features) : features(std::move(features)), clusterId(-1), minDist(__DBL_MAX__){}
 
     // Method to calculate Euclidean distance from this point to another point
     float calculateDistance(const Point& other) const {

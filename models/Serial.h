@@ -13,23 +13,23 @@
 #include <ctime>
 #include "../models/Point.h"
 
-class Serial : public IAlgorithm {
+class Serial final : public IAlgorithm {
 public:
-    void run(std::vector<SpotifyGenreRevealParty::Point> data, int k, size_t dimensions, int maxIterations = 100, double tolerance = 1e-4) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point> data, const int k, const size_t dimensions, const int maxIterations = 100, const double tolerance = 1e-4) override {
         std::cout << "Running Serial implementation." << std::endl;
 
         serial(data, k, dimensions, maxIterations, tolerance); // Pass the tolerance for early stopping
     }
 
 private:
-    void serial(std::vector<SpotifyGenreRevealParty::Point>& points, int k, int dimensions, int maxIterations, double tolerance) {
+    static void serial(std::vector<SpotifyGenreRevealParty::Point>& points, const int k, const int dimensions, const int maxIterations, const double tolerance) {
         auto centroids = generateCentroids(k, dimensions);
 
         for (int iter = 0; iter < maxIterations; ++iter) {  // Iterate for maxIterations times
             std::cout << "Iteration " << iter + 1 << std::endl;
 
             // Move centroids to prevCentroids for convergence check
-            auto prevCentroids = std::move(centroids);
+            auto prevCentroids = centroids;
 
             // Assign points to clusters
             assignPointsToClusters(points, centroids, k);
@@ -46,15 +46,15 @@ private:
     }
 
     // Function to assign points to the closest centroid
-    void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
-                                 std::vector<std::unique_ptr<SpotifyGenreRevealParty::Point>>& centroids, int k) {
+    static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
+                                 const std::vector<SpotifyGenreRevealParty::Point>& centroids, const int k) {
         for (auto& point : points) {
             double minDist = __DBL_MAX__;
             int clusterId = -1;
 
             // Find the nearest centroid to the point
             for (int i = 0; i < k; ++i) {
-                double dist = centroids[i]->calculateDistance(point);
+                double dist = centroids[i].calculateDistance(point);
                 if (dist < minDist) {
                     minDist = dist;
                     clusterId = i;
@@ -68,8 +68,8 @@ private:
     }
 
     // Function to compute new centroids based on the points
-    void computeCentroids(std::vector<SpotifyGenreRevealParty::Point>& points,
-                          std::vector<std::unique_ptr<SpotifyGenreRevealParty::Point>>& centroids, int k) {
+    static void computeCentroids(std::vector<SpotifyGenreRevealParty::Point>& points,
+                          std::vector<SpotifyGenreRevealParty::Point>& centroids, int k) {
         std::vector<int> nPoints(k, 0);  // Number of points in each cluster
         std::vector<std::vector<double>> sum(k);  // Sum of feature values for each cluster
 
@@ -93,19 +93,18 @@ private:
         for (size_t clusterId = 0; clusterId < k; ++clusterId) {
             if (nPoints[clusterId] > 0) {
                 for (size_t featureIndex = 0; featureIndex < sum[clusterId].size(); ++featureIndex) {
-                    centroids[clusterId]->features[featureIndex] = sum[clusterId][featureIndex] / nPoints[clusterId];
+                    centroids[clusterId].features[featureIndex] = sum[clusterId][featureIndex] / nPoints[clusterId];
                 }
             }
         }
     }
 
     // Function to compare the old centroids with the new centroids
-    bool hasConverged(const std::vector<std::unique_ptr<SpotifyGenreRevealParty::Point>>& prevCentroids,
-                      const std::vector<std::unique_ptr<SpotifyGenreRevealParty::Point>>& centroids,
-                      double tolerance) {
+    static bool hasConverged(const std::vector<SpotifyGenreRevealParty::Point>& prevCentroids,
+                      const std::vector<SpotifyGenreRevealParty::Point>& centroids,
+                      const double tolerance) {
         for (size_t i = 0; i < centroids.size(); ++i) {
-            double dist = prevCentroids[i]->calculateDistance(*centroids[i]);
-            if (dist > tolerance) {
+            if (const double dist = prevCentroids[i].calculateDistance(centroids[i]); dist > tolerance) {
                 return false;  // If any centroid has moved more than the tolerance, return false (not converged)
             }
         }
@@ -113,8 +112,8 @@ private:
     }
 
     // Generate k centroids with random feature values
-    std::vector<std::unique_ptr<SpotifyGenreRevealParty::Point>> generateCentroids(int k, int numFeatures) {
-        std::vector<std::unique_ptr<SpotifyGenreRevealParty::Point>> centroids;
+    static std::vector<SpotifyGenreRevealParty::Point> generateCentroids(const int k, const int numFeatures) {
+        std::vector<SpotifyGenreRevealParty::Point> centroids;
 
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -123,12 +122,12 @@ private:
         for (int i = 0; i < k; i++) {
             std::vector<float> feats;
 
+            feats.reserve(numFeatures);
             for (int j = 0; j < numFeatures; j++) {
                 feats.push_back(dis(gen));  // Generate random value between 0 and 1
             }
 
-            auto centroid = std::make_unique<SpotifyGenreRevealParty::Point>(feats);
-            centroids.push_back(std::move(centroid));  // Move the unique_ptr into the vector
+            centroids.emplace_back(feats);  // Create and push centroid
         }
 
         return centroids;
