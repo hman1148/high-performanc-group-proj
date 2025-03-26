@@ -37,48 +37,55 @@ private:
     static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
                                         const std::vector<SpotifyGenreRevealParty::Point>& centroids, const int k) {
         #pragma omp parallel for
-        for (size_t i = 0; i < points.size(); ++i) {
+        for (auto & point : points) {
             double minDist = __DBL_MAX__;
             int clusterId = -1;
 
             for (int j = 0; j < k; ++j) {
-                double dist = centroids[j].calculateDistance(points[i]);
+                double dist = centroids[j].calculateDistance(point);
                 if (dist < minDist) {
                     minDist = dist;
                     clusterId = j;
                 }
             }
 
-            points[i].minDist = minDist;
-            points[i].clusterId = clusterId;
+            point.minDist = minDist;
+            point.clusterId = clusterId;
         }
     }
 
     static void computeCentroids(std::vector<SpotifyGenreRevealParty::Point>& points,
-                                  std::vector<SpotifyGenreRevealParty::Point>& centroids, int k) {
+                              std::vector<SpotifyGenreRevealParty::Point>& centroids, int k) {
+        // This will hold the number of points in each cluster
         std::vector<int> nPoints(k, 0);
+
+        // This will hold the sum of features for each cluster
         std::vector<std::vector<double>> sum(k, std::vector<double>(centroids[0].features.size(), 0.0));
 
         // Parallelized sum computation using OpenMP
-        #pragma omp parallel for reduction(+ : nPoints[:k])
+        #pragma omp parallel for
         for (size_t i = 0; i < points.size(); ++i) {
             int clusterId = points[i].clusterId;
+
+            // Update the number of points in the cluster (thread-private)
+            #pragma omp atomic
             nPoints[clusterId]++;
 
+            // Update the sum of the features (atomic per feature for each cluster)
             for (size_t featureIndex = 0; featureIndex < points[i].features.size(); ++featureIndex) {
                 #pragma omp atomic
                 sum[clusterId][featureIndex] += points[i].features[featureIndex];
             }
 
+            // Min distance reset
             points[i].minDist = __DBL_MAX__;
         }
 
-        // Compute new centroids
-        #pragma omp parallel for
-        for (int clusterId = 0; clusterId < k; ++clusterId) {
-            if (nPoints[clusterId] > 0) {
-                for (size_t featureIndex = 0; featureIndex < centroids[clusterId].features.size(); ++featureIndex) {
-                    centroids[clusterId].features[featureIndex] = sum[clusterId][featureIndex] / nPoints[clusterId];
+        // After parallel loop, compute centroids
+        for (int i = 0; i < k; ++i) {
+            if (nPoints[i] > 0) {
+                for (size_t featureIndex = 0; featureIndex < centroids[0].features.size(); ++featureIndex) {
+                    centroids[i].features[featureIndex] = sum[i][featureIndex] / nPoints[i];
                 }
             }
         }
