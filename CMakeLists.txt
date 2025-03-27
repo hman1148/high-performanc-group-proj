@@ -3,6 +3,9 @@ project(class_project)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Check for OpenMP support
+find_package(OpenMP REQUIRED)
+
 add_executable(class_project src/main.cpp
         models/SpotifyFrame.h
         src/AlgorithmFactory.cpp

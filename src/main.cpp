@@ -6,67 +6,36 @@
 #include "../tools/SpotifyFrameReader.h"
 #include "../tools/SpotifyFrameUtils.h"
 
+void printUsage() {
+    std::cerr << "Usage: <executable> <k> <max_iterations> <tolerance> <algorithm_id>" << std::endl;
+    std::cerr << "  k: Number of clusters (positive integer)" << std::endl;
+    std::cerr << "  max_iterations: Maximum number of iterations (positive integer)" << std::endl;
+    std::cerr << "  tolerance: Convergence tolerance (positive float)" << std::endl;
+    std::cerr << "  algorithm_id: ID of the algorithm to run (1 to 5)" << std::endl;
+    std::cerr << "\tSerial = 1\n"
+                 "\tShared memory parallel CPU = 2\n"
+                 "\tDistributed memory parallel CPU = 3\n"
+                 "\tShared Memory Parallel GPU = 4\n"
+                 "\tDistributed Memory Parallel GPU = 5" << std::endl;
+}
+
 int main(int argc, char* argv[]) {
-
-    if (argc < 2 || argc > 4) {
-        std::cerr << "Error: Please provide 1 to 3 arguments for k, max_iterations, and tolerance" << std::endl;
+    // Check if the number of arguments is correct (5 total: executable + k + max_iterations + tolerance + algorithm_id)
+    if (argc != 5) {
+        printUsage();
         return 1;
     }
 
-    int k = 0;
-    try {
-        k = std::stoi(argv[1]);
-        if (k <= 0) {
-            std::cerr << "Error: k must be a positive integer." << std::endl;
-            return 1;
-        }
-        std::cout << "You entered k = " << k << std::endl;
-    } catch (const std::invalid_argument&) {
-        std::cerr << "Error: Invalid input. Please provide a valid integer for k." << std::endl;
+    // Parse arguments
+    int k = std::stoi(argv[1]);
+    int max_iterations = std::stoi(argv[2]);
+    double tolerance = std::stod(argv[3]);
+    int algorithm_id = std::stoi(argv[4]);
+
+    // Validate k, max_iterations, tolerance, and algorithm_id
+    if (k <= 0 || max_iterations <= 0 || tolerance <= 0 || algorithm_id < 1 || algorithm_id > 5) {
+        printUsage();
         return 1;
-    } catch (const std::out_of_range&) {
-        std::cerr << "Error: Input out of range for an integer." << std::endl;
-        return 1;
-    }
-
-    // Default values
-    int max_iterations = 100; // Default max_iterations
-    double tolerance = 0.0001; // Default tolerance
-
-    // Parse max_iterations if provided (argc == 3 or 4)
-    if (argc >= 3) {
-        try {
-            max_iterations = std::stoi(argv[2]);
-            if (max_iterations <= 0) {
-                std::cerr << "Error: max_iterations must be a positive integer." << std::endl;
-                return 1;
-            }
-            std::cout << "You entered max_iterations = " << max_iterations << std::endl;
-        } catch (const std::invalid_argument&) {
-            std::cerr << "Error: Invalid input. Please provide a valid integer for max_iterations." << std::endl;
-            return 1;
-        } catch (const std::out_of_range&) {
-            std::cerr << "Error: Input out of range for an integer." << std::endl;
-            return 1;
-        }
-    }
-
-    // Parse tolerance if provided (argc == 4)
-    if (argc == 4) {
-        try {
-            tolerance = std::stod(argv[3]);
-            if (tolerance <= 0) {
-                std::cerr << "Error: tolerance must be a positive number." << std::endl;
-                return 1;
-            }
-            std::cout << "You entered tolerance = " << tolerance << std::endl;
-        } catch (const std::invalid_argument&) {
-            std::cerr << "Error: Invalid input. Please provide a valid number for tolerance." << std::endl;
-            return 1;
-        } catch (const std::out_of_range&) {
-            std::cerr << "Error: Input out of range for a double." << std::endl;
-            return 1;
-        }
     }
 
     // Path to your CSV file (relative to working directory)
@@ -109,16 +78,13 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Dimension of feature vectors: " << dimension << std::endl;
 
-    // Loop through different i values for the different implementations
-    for (int i = 1; i <= 5; i++) {
-        try {
-            // Create the algorithm and pass in the prepared data (now as Points)
-            const std::unique_ptr<IAlgorithm> algorithm = createAlgorithm(i);
-
-            algorithm->run(points, k, dimension, max_iterations, tolerance);  // Pass Points instead of raw data
-        } catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
+    // Create the algorithm and run it with the specified parameters
+    try {
+        const std::unique_ptr<IAlgorithm> algorithm = createAlgorithm(algorithm_id);
+        algorithm->run(points, k, dimension, max_iterations, tolerance);  // Pass Points instead of raw data
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
     }
 
     return 0;
