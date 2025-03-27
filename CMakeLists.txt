@@ -9,4 +9,8 @@ add_executable(class_project src/main.cpp
         src/SpotifyFrameUtils.cpp
         tools/utils.cpp
         tools/SpotifyFrameReader.cpp
-        tools/SpotifyFrameReader.h)
+        tools/SpotifyFrameReader.h
+        algoirthm_impl/SharedGPU.cu
+        algoirthm_impl/SharedGPU.cuh
+        algoirthm_impl/SharedGPU.cuh
+)

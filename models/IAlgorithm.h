@@ -9,14 +9,15 @@
 
 #include "Point.h"
 
-class IAlgorithm {
-  public:
-    virtual void run(std::vector<SpotifyGenreRevealParty::Point> data,
-                     int k,
-                     size_t dimensions,
-                     int maxIterations,
-                     double tolerance) = 0;
-    virtual ~IAlgorithm() = default;
+class IAlgorithm
+{
+public:
+  virtual void run(std::vector<SpotifyGenreRevealParty::Point> &data,
+                   int k,
+                   size_t dimensions,
+                   int maxIterations,
+                   double tolerance) = 0;
+  virtual ~IAlgorithm() = default;
 };
 
-#endif //IALGORITHM_H
+#endif // IALGORITHM_H

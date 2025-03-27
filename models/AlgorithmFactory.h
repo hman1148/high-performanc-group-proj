@@ -7,6 +7,7 @@
 
 #include "IAlgorithm.h"
 #include <memory>
+
 std::unique_ptr<IAlgorithm> createAlgorithm(int choice);
 
 

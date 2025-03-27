@@ -9,8 +9,9 @@
 #include "../models/DistributedGpu.h"
 #include <memory>
 #include <stdexcept>
+#include <cstdint>
 
-std::unique_ptr<IAlgorithm> createAlgorithm(int choice) {
+std::unique_ptr<IAlgorithm> createAlgorithm(std::uint8_t choice) {
     switch (choice) {
         case 1: return std::make_unique<Serial>();
         case 2: return std::make_unique<SharedCpu>();

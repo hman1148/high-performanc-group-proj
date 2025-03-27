@@ -2,17 +2,16 @@
 // Created by Joe Brijs on 3/21/25.
 //
 
-#ifndef DISTRIBUTEDGPU_CPP_H
-#define DISTRIBUTEDGPU_CPP_H
+#pragma once
 
 #include "IAlgorithm.h"
 #include <iostream>
 
-class DistributedGpu : public IAlgorithm {
+class DistributedGpu : public IAlgorithm
+{
 public:
-    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t, int, double) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point> &data, int, size_t, int, double) override
+    {
         std::cout << "Running Disributed GPU implementation." << std::endl;
     }
 };
-
-#endif //DISTRIBUTEDGPU_CPP_H

@@ -2,17 +2,16 @@
 // Created by Joe Brijs on 3/21/25.
 //
 
-#ifndef DISTRIBUTEDCPU_H
-#define DISTRIBUTEDCPU_H
+#pragma once
 
 #include "IAlgorithm.h"
 #include <iostream>
 
-class DistributedCpu : public IAlgorithm {
+class DistributedCpu : public IAlgorithm
+{
 public:
-    void run(std::vector<SpotifyGenreRevealParty::Point>, int, size_t, int, double) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point> &data, int, size_t, int, double) override
+    {
         std::cout << "Running Distributed CPU implementation." << std::endl;
     }
 };
-
-#endif // DISTRIBUTEDCPU_H
