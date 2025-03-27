@@ -8,12 +8,7 @@
 class SharedCpu : public IAlgorithm
 {
 public:
-<<<<<<< HEAD
-    void run(std::vector<SpotifyGenreRevealParty::Point> &data, int, size_t, int, double) override
-    {
-        std::cout << "Running Shared CPU implementation." << std::endl;
-=======
-    void run(std::vector<SpotifyGenreRevealParty::Point> points, int k, size_t dimensions, int maxIterations, double tolerance) override {
+    void run(std::vector<SpotifyGenreRevealParty::Point>& points, int k, size_t dimensions, int maxIterations, double tolerance) override {
         std::cout << "Running Shared CPU implementation with OpenMP." << std::endl;
         sharedMemoryParallelCpu(points, k, dimensions, maxIterations, tolerance);
     }
@@ -127,7 +122,6 @@ private:
         }
 
         return centroids;
->>>>>>> a2bca991d4ce60fc4aeeb725f3fe6e15ca10802e
     }
 };
 

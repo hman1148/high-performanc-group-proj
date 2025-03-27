@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <cstdint>
 
-std::unique_ptr<IAlgorithm> createAlgorithm(std::uint8_t choice) {
+std::unique_ptr<IAlgorithm> createAlgorithm(int choice) {
     switch (choice) {
         case 1: return std::make_unique<Serial>();
         case 2: return std::make_unique<SharedCpu>();
