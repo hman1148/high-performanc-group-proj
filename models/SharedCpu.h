@@ -109,14 +109,13 @@ private:
 
     static std::vector<SpotifyGenreRevealParty::Point> generateCentroids(const int k, const int numFeatures) {
         std::vector<SpotifyGenreRevealParty::Point> centroids;
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+        std::default_random_engine generator(100);
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f); // Random float between 0 and 1
 
         for (int i = 0; i < k; i++) {
             std::vector<float> feats(numFeatures);
             for (int j = 0; j < numFeatures; j++) {
-                feats[j] = dis(gen);
+                feats[j] = dis(generator);
             }
             centroids.emplace_back(feats);
         }

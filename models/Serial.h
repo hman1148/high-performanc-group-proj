@@ -45,6 +45,7 @@ private:
             if (hasConverged(prevCentroids, centroids, tolerance))
             {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
+                writePointsAndCentroidsToFiles()
                 break; // Exit early if the centroids have converged
             }
         }
@@ -135,8 +136,7 @@ private:
     {
         std::vector<SpotifyGenreRevealParty::Point> centroids;
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
+        std::default_random_engine generator(100);
         std::uniform_real_distribution<float> dis(0.0f, 1.0f); // Random float between 0 and 1
 
         for (int i = 0; i < k; i++)
@@ -146,7 +146,7 @@ private:
             feats.reserve(numFeatures);
             for (int j = 0; j < numFeatures; j++)
             {
-                feats.push_back(dis(gen)); // Generate random value between 0 and 1
+                feats.push_back(dis(generator)); // Generate random value between 0 and 1
             }
 
             centroids.emplace_back(feats); // Create and push centroid

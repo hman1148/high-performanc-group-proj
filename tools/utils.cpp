@@ -5,6 +5,11 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
+#include <iostream>
+#include <fstream>
+#include "../models/Point.h"
+
+
 
 double euclideanDistance(const std::vector<float>& a, const std::vector<float>& b) {
     if (a.size() != b.size()) {
@@ -17,4 +22,32 @@ double euclideanDistance(const std::vector<float>& a, const std::vector<float>& 
         sum += diff * diff;
     }
     return std::sqrt(sum);
+}
+
+void writePointsAndCentroidsToFile(const std::vector<SpotifyGenreRevealParty::Point>& points, const std::vector<SpotifyGenreRevealParty::Point>& centroids, const std::string& filename) {
+    std::ofstream file(filename, std::ios::trunc); // Open in truncate mode to overwrite if exists
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    // Write points
+    file << "# Points" << std::endl;
+    for (const auto& point : points) {
+        for (const auto& feature : point.features) {
+            file << feature << " ";
+        }
+        file << "| Cluster: " << point.clusterId << std::endl;
+    }
+
+    // Write centroids
+    file << "\n# Centroids" << std::endl;
+    for (const auto& centroid : centroids) {
+        for (const auto& feature : centroid.features) {
+            file << feature << " ";
+        }
+        file << "| Centroid" << std::endl;
+    }
+
+    file.close();
 }
