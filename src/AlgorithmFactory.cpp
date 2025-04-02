@@ -4,20 +4,30 @@
 #include "../models/AlgorithmFactory.h"
 #include "../models/Serial.h"
 #include "../models/SharedCpu.h"
-#include "../models/SharedGpu.h"
 #include "../models/DistributedCpu.h"
 #include "../models/DistributedGpu.h"
+
+#include "../gpu/SharedGPU.cuh"
+
 #include <memory>
 #include <stdexcept>
 #include <cstdint>
 
-std::unique_ptr<IAlgorithm> createAlgorithm(std::uint8_t choice) {
-    switch (choice) {
-        case 1: return std::make_unique<Serial>();
-        case 2: return std::make_unique<SharedCpu>();
-        case 3: return std::make_unique<SharedGpu>();
-        case 4: return std::make_unique<DistributedCpu>();
-        case 5: return std::make_unique<DistributedGpu>();
-        default: throw std::invalid_argument("Invalid choice. Please enter a number between 1 and 5.");
+std::unique_ptr<IAlgorithm> createAlgorithm(std::uint8_t choice)
+{
+    switch (choice)
+    {
+    case 1:
+        return std::make_unique<Serial>();
+    case 2:
+        return std::make_unique<SharedCpu>();
+    case 3:
+        return std::make_unique<SpotifyGenreRevealParty::SharedGPU>(10, 100);
+    case 4:
+        return std::make_unique<DistributedCpu>();
+    case 5:
+        return std::make_unique<DistributedGpu>();
+    default:
+        throw std::invalid_argument("Invalid choice. Please enter a number between 1 and 5.");
     }
 }

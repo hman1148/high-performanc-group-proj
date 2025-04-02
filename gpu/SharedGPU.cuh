@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <cuda_runtime.h>
+
 #include <vector>
 #include <memory>
 #include <string>
@@ -12,9 +14,9 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
-#include <cuda_runtime.h>
 
-#include "AlgorithmFactory.h"
+#include "../models/AlgorithmFactory.h"
+#include "../models/Point.h"
 
 namespace SpotifyGenreRevealParty
 {
