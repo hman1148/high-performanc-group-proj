@@ -12,9 +12,11 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
-#include <cuda_runtime.h>
 
-#include "AlgorithmFactory.h"
+#include "../models/IAlgorithm.h"
+
+struct cudaDeviceProp;
+typedef struct CUstream_st *cudaStream_t;
 
 namespace SpotifyGenreRevealParty
 {
