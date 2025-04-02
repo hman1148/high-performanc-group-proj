@@ -50,4 +50,5 @@ void writePointsAndCentroidsToFile(const std::vector<SpotifyGenreRevealParty::Po
     }
 
     file.close();
+    std::cout << "Output file written to:  " << filename << std::endl;
 }

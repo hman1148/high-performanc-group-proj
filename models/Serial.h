@@ -12,6 +12,7 @@
 #include <random> // For better random number generation
 #include <ctime>
 #include "../models/Point.h"
+# include "../tools/utils.h"
 
 class Serial final : public IAlgorithm
 {
@@ -45,10 +46,12 @@ private:
             if (hasConverged(prevCentroids, centroids, tolerance))
             {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                writePointsAndCentroidsToFiles()
+                writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
                 break; // Exit early if the centroids have converged
             }
         }
+        std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
+        writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
     }
 
     // Function to assign points to the closest centroid
