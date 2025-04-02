@@ -10,7 +10,7 @@
 #include <string>
 #include "../models/Point.h"
 
-namespace SpotifyGenreRevealParty {
+namespace utils {
     void writePointsAndCentroidsToFile(const std::vector<Point>& points, const std::vector<Point>& centroids, const std::string& filename);
 }
 
