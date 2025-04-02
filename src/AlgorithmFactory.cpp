@@ -3,7 +3,7 @@
 //
 #include "../models/AlgorithmFactory.h"
 #include "../models/Serial.h"
-#include "../models/SharedCpu.h"
+#include "../models/SharedCpu.hpp"
 #include "../models/DistributedCpu.h"
 #include "../models/DistributedGpu.h"
 

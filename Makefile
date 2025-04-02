@@ -142,6 +142,30 @@ gpu/fast:
 	$(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/build
 .PHONY : gpu/fast
 
+models/SharedCpu.o: models/SharedCpu.cpp.o
+.PHONY : models/SharedCpu.o
+
+# target to build an object file
+models/SharedCpu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/class_project.dir/build.make CMakeFiles/class_project.dir/models/SharedCpu.cpp.o
+.PHONY : models/SharedCpu.cpp.o
+
+models/SharedCpu.i: models/SharedCpu.cpp.i
+.PHONY : models/SharedCpu.i
+
+# target to preprocess a source file
+models/SharedCpu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/class_project.dir/build.make CMakeFiles/class_project.dir/models/SharedCpu.cpp.i
+.PHONY : models/SharedCpu.cpp.i
+
+models/SharedCpu.s: models/SharedCpu.cpp.s
+.PHONY : models/SharedCpu.s
+
+# target to generate assembly for a file
+models/SharedCpu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/class_project.dir/build.make CMakeFiles/class_project.dir/models/SharedCpu.cpp.s
+.PHONY : models/SharedCpu.cpp.s
+
 src/AlgorithmFactory.o: src/AlgorithmFactory.cpp.o
 .PHONY : src/AlgorithmFactory.o
 
@@ -272,6 +296,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... class_project"
 	@echo "... gpu"
+	@echo "... models/SharedCpu.o"
+	@echo "... models/SharedCpu.i"
+	@echo "... models/SharedCpu.s"
 	@echo "... src/AlgorithmFactory.o"
 	@echo "... src/AlgorithmFactory.i"
 	@echo "... src/AlgorithmFactory.s"
