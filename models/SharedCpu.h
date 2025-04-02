@@ -8,10 +8,10 @@
 class SharedCpu : public IAlgorithm
 {
 public:
-    void run(std::vector<SpotifyGenreRevealParty::Point> points, int k, size_t dimensions, int maxIterations, double tolerance)
+    void run(std::vector<SpotifyGenreRevealParty::Point> &points, int k, size_t dimensions, int maxIterations, double tolerance) override
     {
         std::cout << "Running Shared CPU implementation with OpenMP." << std::endl;
-        sharedMemoryParallelCpu(points, k, dimensions, maxIterations, tolerance);
+        this->sharedMemoryParallelCpu(points, k, dimensions, maxIterations, tolerance);
     }
 
 private:

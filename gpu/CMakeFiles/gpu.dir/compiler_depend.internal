@@ -3,7 +3,6 @@
 
 gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o
  /mnt/c/Users/Hunter Peart/CS5030/class-project/gpu/SharedGPU.cu
- /mnt/c/Users/Hunter Peart/CS5030/class-project/models/AlgorithmFactory.h
  /mnt/c/Users/Hunter Peart/CS5030/class-project/models/IAlgorithm.h
  /mnt/c/Users/Hunter Peart/CS5030/class-project/models/Point.h
  /mnt/c/Users/Hunter Peart/CS5030/class-project/gpu/SharedGPU.cuh

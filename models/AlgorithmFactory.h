@@ -10,5 +10,4 @@
 
 std::unique_ptr<IAlgorithm> createAlgorithm(int choice);
 
-
-#endif //ALGORITHMFACTORY_H
+#endif // ALGORITHMFACTORY_H

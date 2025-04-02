@@ -74,7 +74,7 @@ gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o: gpu/CMakeFiles/gpu.dir/includes_CUDA.rsp
 gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o: gpu/SharedGPU.cu
 gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o: gpu/CMakeFiles/gpu.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/mnt/c/Users/Hunter Peart/CS5030/class-project/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CUDA object gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o"
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu" && /usr/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o -MF CMakeFiles/gpu.dir/SharedGPU.cu.o.d -x cu -rdc=true -c "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu/SharedGPU.cu" -o CMakeFiles/gpu.dir/SharedGPU.cu.o
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu" && /usr/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o -MF CMakeFiles/gpu.dir/SharedGPU.cu.o.d -x cu -c "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu/SharedGPU.cu" -o CMakeFiles/gpu.dir/SharedGPU.cu.o
 
 gpu/CMakeFiles/gpu.dir/SharedGPU.cu.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/gpu.dir/SharedGPU.cu.i"

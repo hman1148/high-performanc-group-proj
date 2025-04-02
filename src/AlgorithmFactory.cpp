@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <cstdint>
 
-std::unique_ptr<IAlgorithm> createAlgorithm(std::uint8_t choice)
+std::unique_ptr<IAlgorithm> createAlgorithm(int choice)
 {
     switch (choice)
     {

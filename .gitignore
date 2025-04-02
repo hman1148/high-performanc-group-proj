@@ -4,3 +4,5 @@ data/
 *cmake_install.cmake
 CMakeFiles/*
 *CMakeCache.txt
+gpu/CMakeFiles/*
+gpu/libgpu.a

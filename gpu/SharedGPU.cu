@@ -2,10 +2,8 @@
 // Created by Hunter Peart on 3/25/2025.
 //
 
-// CUDA includes at global scope
 #include <cuda_runtime.h>
 
-// Then include our header
 #include "SharedGPU.cuh"
 
 // Define error checking macro
@@ -226,10 +224,10 @@ namespace SpotifyGenreRevealParty
         const int blocksForCentroids = (m_number_of_clusters + threadPerBlock - 1) / threadPerBlock;
 
         // Cast to proper types for kernel calls
-        float *device_data = static_cast<float *>(m_device_data);
-        float *device_centroids = static_cast<float *>(m_device_centroids);
-        int *device_cluster_assignments = static_cast<int *>(m_device_cluster_assignments);
-        int *device_cluster_counts = static_cast<int *>(m_device_cluster_counts);
+        float *device_data = static_cast<float *>(this->m_device_data);
+        float *device_centroids = static_cast<float *>(this->m_device_centroids);
+        int *device_cluster_assignments = static_cast<int *>(this->m_device_cluster_assignments);
+        int *device_cluster_counts = static_cast<int *>(this->m_device_cluster_counts);
 
         // Temporary buffer for centroids
         float *d_new_centroids;

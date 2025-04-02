@@ -297,6 +297,5 @@ gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o : /mnt/c/Users/Hunter\ Peart/CS5030/class-
     /usr/include/c++/11/bits/random.tcc \
     /usr/include/c++/11/numeric \
     /usr/include/c++/11/bits/stl_numeric.h \
-    /mnt/c/Users/Hunter\ Peart/CS5030/class-project/gpu/../models/AlgorithmFactory.h \
     /mnt/c/Users/Hunter\ Peart/CS5030/class-project/gpu/../models/IAlgorithm.h \
     /mnt/c/Users/Hunter\ Peart/CS5030/class-project/gpu/../models/Point.h
