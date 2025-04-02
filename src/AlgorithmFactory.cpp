@@ -12,6 +12,7 @@
 #include <memory>
 #include <stdexcept>
 #include <cstdint>
+#include "../tools/utils.h"
 
 std::unique_ptr<IAlgorithm> createAlgorithm(int choice)
 {
