@@ -34,6 +34,7 @@ add_executable(class_project
 # Include directories
 target_include_directories(class_project PRIVATE
     ${CMAKE_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/tools
 )
 
 # Link libraries
