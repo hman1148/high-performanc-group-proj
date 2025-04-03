@@ -32,12 +32,15 @@ int main(int argc, char* argv[]) {
     double tolerance = std::stod(argv[3]);
     int algorithm_id = std::stoi(argv[4]);
 
+
+    std::cout << "Validating arguments..." << std::endl;
     // Validate k, max_iterations, tolerance, and algorithm_id
     if (k <= 0 || max_iterations <= 0 || tolerance <= 0 || algorithm_id < 1 || algorithm_id > 5) {
         printUsage();
         return 1;
     }
 
+    std::cout << "Reading data from data/track_features.csv" << std::endl;
     // Path to your CSV file (relative to working directory)
     const std::string fileName = "../data/tracks_features.csv";
 

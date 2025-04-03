@@ -27,6 +27,7 @@ public:
 private:
     static void serial(std::vector<SpotifyGenreRevealParty::Point> &points, const int k, const int dimensions, const int maxIterations, const double tolerance)
     {
+        std::cout << "Running Serial implementation." << std::endl;
         auto centroids = generateCentroids(k, dimensions);
 
         for (int iter = 0; iter < maxIterations; ++iter)
