@@ -1,4 +1,7 @@
 import sys
+import os
+
+OUTPUT_DIRECTORY = "output"
 
 def read_results(file_path):
     """Reads clustering results from a file, separating points and centroids."""
@@ -25,29 +28,32 @@ def read_results(file_path):
 
     return points, centroids
 
-def compare_files(files):
+def compare_files(filenames):
     """Compares multiple clustering results for consistency."""
-    if len(files) < 2:
+    if len(filenames) < 2:
         print("Need at least two files to compare!")
         return
 
-    # Read reference file
-    ref_points, ref_centroids = read_results(files[0])
+    # Convert filenames to full paths in OUTPUT_DIRECTORY
+    file_paths = [os.path.join(OUTPUT_DIRECTORY, f) for f in filenames]
 
-    for file in files[1:]:
+    # Read reference file
+    ref_points, ref_centroids = read_results(file_paths[0])
+
+    for file in file_paths[1:]:
         curr_points, curr_centroids = read_results(file)
 
         # Compare points-to-cluster assignments
         if ref_points != curr_points:
-            print(f"Mismatch in point cluster assignments between {files[0]} and {file}")
+            print(f"Mismatch in point cluster assignments between {file_paths[0]} and {file}")
             return
 
         # Compare centroids (order matters)
         if ref_centroids != curr_centroids:
-            print(f"Mismatch in centroids between {files[0]} and {file}")
+            print(f"Mismatch in centroids between {file_paths[0]} and {file}")
             return
 
-    print("✅ All implementations produce identical clustering results!")
+    print("All implementations produce identical clustering results!")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
