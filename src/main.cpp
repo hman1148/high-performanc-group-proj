@@ -46,6 +46,11 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Reading frames from data/track_features.csv .." << std::endl;
 
+    if (const std::ifstream fileCheck(fileName); !fileCheck) {
+        std::cerr << "Error: File not found or cannot be opened: " << fileName << std::endl;
+        return 1;
+    }
+
     // Read frames from the CSV
     const auto frames = SpotifyGenreRevealParty::SpotifyFrameReader::readCSV(fileName);
 
