@@ -40,9 +40,11 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Reading data from data/track_features.csv" << std::endl;
+    std::cout << "Reading data from data/track_features.csv .." << std::endl;
     // Path to your CSV file (relative to working directory)
     const std::string fileName = "../data/tracks_features.csv";
+
+    std::cout << "Reading frames from data/track_features.csv .." << std::endl;
 
     // Read frames from the CSV
     const auto frames = SpotifyGenreRevealParty::SpotifyFrameReader::readCSV(fileName);
