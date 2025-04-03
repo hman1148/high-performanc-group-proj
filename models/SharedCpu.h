@@ -30,7 +30,13 @@ private:
 
             if (hasConverged(prevCentroids, centroids, tolerance)) {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
+                std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
+                utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
                 break;
+            }
+            if (!hasConverged(points, centroids, tolerance)) {
+                std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
+                utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
             }
         }
     }

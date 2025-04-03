@@ -50,8 +50,10 @@ private:
                 break; // Exit early if the centroids have converged
             }
         }
-        std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
-        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+        if (!hasConverged(points, centroids, tolerance)) {
+            std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
+            utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+        }
     }
 
     // Function to assign points to the closest centroid
