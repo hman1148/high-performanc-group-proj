@@ -3,16 +3,13 @@
 //
 #include "../models/AlgorithmFactory.h"
 #include "../models/Serial.h"
-#include "../models/SharedCpu.hpp"
 #include "../models/DistributedCpu.h"
 #include "../models/DistributedGpu.h"
+#include "../models/SharedCpu.h"
 
 #include "../gpu/SharedGPU.cuh"
 
-#include <memory>
 #include <stdexcept>
-#include <cstdint>
-#include "../tools/utils.h"
 
 std::unique_ptr<IAlgorithm> createAlgorithm(int choice)
 {
