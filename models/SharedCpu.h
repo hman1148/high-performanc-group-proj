@@ -7,6 +7,7 @@
 #include "../tools/utils.h"
 #include <random>
 #include <vector>
+#include <iostream>
 
 class SharedCpu : public IAlgorithm
 {
@@ -33,7 +34,6 @@ private:
 
             if (hasConverged(prevCentroids, centroids, tolerance)) {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
                 utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
                 break;
             }
@@ -46,8 +46,9 @@ private:
 
     static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
                                         const std::vector<SpotifyGenreRevealParty::Point>& centroids, const int k) {
-        #pragma omp parallel for
-        for (auto & point : points) {
+#pragma omp parallel for
+        for (size_t i = 0; i < points.size(); ++i) {
+            auto& point = points[i];
             double minDist = __DBL_MAX__;
             int clusterId = -1;
 
