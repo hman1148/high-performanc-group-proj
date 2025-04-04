@@ -4,6 +4,8 @@
 #include "IAlgorithm.h"
 #include <iostream>
 #include <omp.h>
+#include "../tools/utils.h"
+#include <random>
 
 class SharedCpu : public IAlgorithm
 {

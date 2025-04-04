@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <random> // For better random number generation
+#include <random>
 #include <ctime>
 #include "../models/Point.h"
 # include "../tools/utils.h"

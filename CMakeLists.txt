@@ -26,8 +26,7 @@ add_executable(class_project
     src/main.cpp
     src/AlgorithmFactory.cpp
     src/SpotifyFrameUtils.cpp
-    models/SharedCpu.cpp
-    tools/utils.cpp
+        tools/utils.cpp
     tools/SpotifyFrameReader.cpp
 )
 
