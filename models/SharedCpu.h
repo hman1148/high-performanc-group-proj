@@ -6,6 +6,7 @@
 #include <omp.h>
 #include "../tools/utils.h"
 #include <random>
+#include <vector>
 
 class SharedCpu : public IAlgorithm
 {
