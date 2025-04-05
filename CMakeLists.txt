@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
+set(CMAKE_CUDA_ARCHITECTURES 61 75 86)
 
 project(class_project LANGUAGES CXX CUDA)
 
@@ -13,7 +14,6 @@ set(CMAKE_CUDA_RESOLVE_DEVICE_SYMBOLS OFF)
 # Set CUDA standard
 set(CMAKE_CUDA_STANDARD 14)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-set(CMAKE_CUDA_ARCHITECTURES 61 75 86)
 
 # Add GPU subdirectory
 add_subdirectory(gpu)
