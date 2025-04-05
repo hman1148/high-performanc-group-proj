@@ -13,7 +13,7 @@ set(CMAKE_CUDA_RESOLVE_DEVICE_SYMBOLS OFF)
 # Set CUDA standard
 set(CMAKE_CUDA_STANDARD 14)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-set(CMAKE_CUDA_ARCHITECTURES "native")
+#set(CMAKE_CUDA_ARCHITECTURES "native")
 
 # Add GPU subdirectory
 add_subdirectory(gpu)
