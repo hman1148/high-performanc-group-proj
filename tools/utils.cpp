@@ -9,6 +9,7 @@
 #include <fstream>
 #include "../models/Point.h"
 #include "utils.h"
+using namespace SpotifyGenreRevealParty;
 
 
 namespace utils {
@@ -53,4 +54,5 @@ namespace utils {
         file.close();
         std::cout << "Output file written to:  " << filename << std::endl;
     }
+
 }

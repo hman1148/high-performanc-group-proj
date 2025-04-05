@@ -7,8 +7,6 @@
 #define UTILS_H
 
 #include <vector>
-#include <string>
-#include "../models/Point.h"
 
 namespace utils {
     void writePointsAndCentroidsToFile(const std::vector<SpotifyGenreRevealParty::Point>& points, const std::vector<SpotifyGenreRevealParty::Point>& centroids, const std::string& filename);

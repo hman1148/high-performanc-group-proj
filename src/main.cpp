@@ -5,6 +5,7 @@
 
 #include "../tools/SpotifyFrameReader.h"
 #include "../tools/SpotifyFrameUtils.h"
+using namespace SpotifyGenreRevealParty;
 
 void printUsage() {
     std::cerr << "Usage: <executable> <k> <max_iterations> <tolerance> <algorithm_id>" << std::endl;
@@ -40,35 +41,19 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Reading data from data/track_features.csv .." << std::endl;
-    // Path to your CSV file (relative to working directory)
-    const std::string fileName = "../data/tracks_features.csv";
+    const std::string csvFile = "../data/tracks_features.csv";
+    const std::string binaryCache = "../data/points_cache.bin";
 
-    std::cout << "Reading frames from data/track_features.csv .." << std::endl;
+    std::vector<Point> points;
 
-    if (const std::ifstream fileCheck(fileName); !fileCheck) {
-        std::cerr << "Error: File not found or cannot be opened: " << fileName << std::endl;
+    try {
+        points = getOrLoadPoints(csvFile, binaryCache);
+    } catch (const std::exception& e) {
+        std::cerr << "Failed to load data: " << e.what() << std::endl;
         return 1;
     }
 
-    // Read frames from the CSV
-    const auto frames = SpotifyGenreRevealParty::SpotifyFrameReader::readCSV(fileName);
-
-    std::cout << "Number of frames: " << frames.size() << std::endl;
-
-    // Prepare the data for K-means as a vector of Point objects
-    std::vector<SpotifyGenreRevealParty::Point> points;
-
-    // Extract features from each shared_ptr<SpotifyFrame> and store as Point objects
-    for (const auto& framePtr : frames) {
-        if (framePtr) {
-            // Dereference the shared_ptr to access the actual object
-            auto features = SpotifyGenreRevealParty::extractFeatures(*framePtr);
-            points.emplace_back(features);  // Create a Point with the feature vector
-        }
-    }
-
-    SpotifyGenreRevealParty::minMaxScale(points);  // Min-max scale based on Points
+    minMaxScale(points);  // Min-max scale based on Points
 
     // Output a few of the scaled data points to ensure the data is ready
     std::cout << "Scaled data (first 3 points):" << std::endl;
