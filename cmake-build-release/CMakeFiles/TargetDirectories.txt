@@ -1,3 +1,0 @@
-C:/Users/Hunter Peart/CS5030/class-project/cmake-build-release/CMakeFiles/class_project.dir
-C:/Users/Hunter Peart/CS5030/class-project/cmake-build-release/CMakeFiles/edit_cache.dir
-C:/Users/Hunter Peart/CS5030/class-project/cmake-build-release/CMakeFiles/rebuild_cache.dir

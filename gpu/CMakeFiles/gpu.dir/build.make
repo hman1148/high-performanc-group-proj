@@ -84,17 +84,34 @@ gpu/CMakeFiles/gpu.dir/SharedGPU.cu.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/gpu.dir/SharedGPU.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
+gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o: gpu/CMakeFiles/gpu.dir/flags.make
+gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o: gpu/CMakeFiles/gpu.dir/includes_CUDA.rsp
+gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o: gpu/GlobalGPU.cu
+gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o: gpu/CMakeFiles/gpu.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/mnt/c/Users/Hunter Peart/CS5030/class-project/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o"
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu" && /usr/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o -MF CMakeFiles/gpu.dir/GlobalGPU.cu.o.d -x cu -c "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu/GlobalGPU.cu" -o CMakeFiles/gpu.dir/GlobalGPU.cu.o
+
+gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/gpu.dir/GlobalGPU.cu.i"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
+
+gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/gpu.dir/GlobalGPU.cu.s"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
+
 # Object files for target gpu
 gpu_OBJECTS = \
-"CMakeFiles/gpu.dir/SharedGPU.cu.o"
+"CMakeFiles/gpu.dir/SharedGPU.cu.o" \
+"CMakeFiles/gpu.dir/GlobalGPU.cu.o"
 
 # External object files for target gpu
 gpu_EXTERNAL_OBJECTS =
 
 gpu/libgpu.a: gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o
+gpu/libgpu.a: gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o
 gpu/libgpu.a: gpu/CMakeFiles/gpu.dir/build.make
 gpu/libgpu.a: gpu/CMakeFiles/gpu.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/mnt/c/Users/Hunter Peart/CS5030/class-project/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Linking CUDA static library libgpu.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/mnt/c/Users/Hunter Peart/CS5030/class-project/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Linking CUDA static library libgpu.a"
 	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu" && $(CMAKE_COMMAND) -P CMakeFiles/gpu.dir/cmake_clean_target.cmake
 	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gpu.dir/link.txt --verbose=$(VERBOSE)
 

@@ -1,8 +1,16 @@
+# Build directories
 cmake-build-debug/
+CMakeFiles/
+gpu/CMakeFiles/
+
+# IDE files
 .idea/
+.vscode/
+
+# Data directory
 data/
+
+# CMake generated files
+CMakeCache.txt
 *cmake_install.cmake
-CMakeFiles/*
-*CMakeCache.txt
-gpu/CMakeFiles/*
 gpu/libgpu.a

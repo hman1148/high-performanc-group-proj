@@ -1,2 +1,2 @@
-/usr/bin/ar qc libgpu.a CMakeFiles/gpu.dir/SharedGPU.cu.o
+/usr/bin/ar qc libgpu.a CMakeFiles/gpu.dir/SharedGPU.cu.o CMakeFiles/gpu.dir/GlobalGPU.cu.o
 /usr/bin/ranlib libgpu.a
