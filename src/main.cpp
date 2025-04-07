@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     // Create the algorithm and run it with the specified parameters
     try
     {
-        const std::unique_ptr<IAlgorithm> algorithm = createAlgorithm(algorithm_id);
+        const std::unique_ptr<IAlgorithm> algorithm = createAlgorithm(algorithm_id, k, max_iterations);
         algorithm->run(points, k, dimension, max_iterations, tolerance); // Pass Points instead of raw data
     }
     catch (const std::exception &e)

@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <random>
 #include <fstream>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
 #include <mpi.h>
 
 #include "GlobalGPU.cuh"

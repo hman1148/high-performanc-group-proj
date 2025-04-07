@@ -12,7 +12,7 @@
 
 #include <stdexcept>
 
-std::unique_ptr<IAlgorithm> createAlgorithm(int choice)
+std::unique_ptr<IAlgorithm> createAlgorithm(int choice, const int &k, const int &max_iterations)
 {
     switch (choice)
     {
@@ -21,11 +21,11 @@ std::unique_ptr<IAlgorithm> createAlgorithm(int choice)
     case 2:
         return std::make_unique<SharedCpu>();
     case 3:
-        return std::make_unique<SpotifyGenreRevealParty::SharedGPU>(10, 100);
+        return std::make_unique<SpotifyGenreRevealParty::SharedGPU>(k, max_iterations);
     case 4:
         return std::make_unique<DistributedCpu>();
     case 5:
-        return std::make_unique<SpotifyGenreRevealParty::GlobalGPU>(10, 100);
+        return std::make_unique<SpotifyGenreRevealParty::GlobalGPU>(k, max_iterations);
     default:
         throw std::invalid_argument("Invalid choice. Please enter a number between 1 and 5.");
     }
