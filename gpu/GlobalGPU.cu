@@ -19,7 +19,7 @@
         }                                                                      \
     } while (0)
 
-__global__ void assignPointsToCentroids(float *data, float *centroids, int *assignments, int numPoints, int numDimensions, int k)
+__global__ void assignPointsToGlobalCentroids(float *data, float *centroids, int *assignments, int numPoints, int numDimensions, int k)
 {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -49,7 +49,7 @@ __global__ void assignPointsToCentroids(float *data, float *centroids, int *assi
 }
 
 // CUDA Kernel for accumulating points for centroid updates
-__global__ void updateCentroidsKernel(float *data, float *centroids, int *assignments, int *clusterCounts, int numPoints, int numDimensions, int k)
+__global__ void updateCentroidsGlobalKernel(float *data, float *centroids, int *assignments, int *clusterCounts, int numPoints, int numDimensions, int k)
 {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -68,7 +68,7 @@ __global__ void updateCentroidsKernel(float *data, float *centroids, int *assign
 }
 
 // CUDA Kernel for normalzing centroids by cluster size
-__global__ void normalizeCentroidsKernel(float *centroids, int *clusterCounts, int k, int numDimensions)
+__global__ void normalizeCentroidsGlobalKernel(float *centroids, int *clusterCounts, int k, int numDimensions)
 {
     int clusterId = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -183,22 +183,17 @@ void SpotifyGenreRevealParty::GlobalGPU::freeGPUMemory()
 bool SpotifyGenreRevealParty::GlobalGPU::isMpiCudaAware()
 {
 #ifdef MPIX_CUDA_AWARE_SUPPORT
-    // Add braces for clarity
     if (MPIX_CUDA_AWARE_SUPPORT)
     {
         return true;
     }
 #endif
 
-    // Test by attempting a device pointer transfer
-    int testValue = 0;
     int *d_testValue;
-    CHECK_CUDA_ERROR(cudaMalloc(&d_testValue, sizeof(int))); // Add error checking
+    CHECK_CUDA_ERROR(cudaMalloc(&d_testValue, sizeof(int)));
 
-    // Try a simple MPI operation with GPU memory
-    MPI_Status status;
     int result = MPI_Send(d_testValue, 1, MPI_INT, 0, 0, MPI_COMM_SELF);
-    CHECK_CUDA_ERROR(cudaFree(d_testValue)); // Add error checking
+    CHECK_CUDA_ERROR(cudaFree(d_testValue));
 
     return (result == MPI_SUCCESS);
 }
@@ -305,7 +300,7 @@ void SpotifyGenreRevealParty::GlobalGPU::initializeCentroids(int k, int dimensio
     {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_real_distribution<int> dist(0, this->m_num_points_per_process - 1);
+        std::uniform_real_distribution<float> dist(0, this->m_num_points_per_process - 1);
 
         // Randomly select k unique points from the data
         for (int i = 0; i < k; ++i)
@@ -352,11 +347,11 @@ void SpotifyGenreRevealParty::GlobalGPU::runDistributedKMeans(double tolerance)
 
         // Step 1: assign points to nearest centroid
         // Launch kernel to assign points to nearest centroid
-        assignPointsToCentroids<<<blocksForPoints, threadsPerBlock>>>(this->m_device_data, this->m_device_centroids, this->m_device_cluster_assignments, this->m_num_points_per_process, this->m_number_of_dimensions, this->m_number_of_clusters);
+        assignPointsToGlobalCentroids<<<blocksForPoints, threadsPerBlock>>>(this->m_device_data, this->m_device_centroids, this->m_device_cluster_assignments, this->m_num_points_per_process, this->m_number_of_dimensions, this->m_number_of_clusters);
         CHECK_CUDA_ERROR(cudaGetLastError());
 
         // Step 2. Update centroids (accumulate sum)
-        updateCentroidsKernel<<<blocksForPoints, threadsPerBlock>>>(this->m_device_data, this->m_device_temp_centroids, this->m_device_cluster_assignments, this->m_device_cluster_count, this->m_num_points_per_process, this->m_number_of_dimensions, this->m_number_of_clusters);
+        updateCentroidsGlobalKernel<<<blocksForPoints, threadsPerBlock>>>(this->m_device_data, this->m_device_temp_centroids, this->m_device_cluster_assignments, this->m_device_cluster_count, this->m_num_points_per_process, this->m_number_of_dimensions, this->m_number_of_clusters);
         CHECK_CUDA_ERROR(cudaGetLastError());
 
         // Step 3. Global Reduction
@@ -367,7 +362,7 @@ void SpotifyGenreRevealParty::GlobalGPU::runDistributedKMeans(double tolerance)
             MPI_Allreduce(MPI_IN_PLACE, this->m_device_cluster_count, this->m_number_of_clusters, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
             // normalize centroids
-            normalizeCentroidsKernel<<<blocksForCentroids, threadsPerBlock>>>(this->m_device_temp_centroids, this->m_device_cluster_count, this->m_number_of_clusters, this->m_number_of_dimensions);
+            normalizeCentroidsGlobalKernel<<<blocksForCentroids, threadsPerBlock>>>(this->m_device_temp_centroids, this->m_device_cluster_count, this->m_number_of_clusters, this->m_number_of_dimensions);
             CHECK_CUDA_ERROR(cudaGetLastError());
 
             // Copy to main centroids buffer
