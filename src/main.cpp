@@ -2,6 +2,7 @@
 #include "../models/AlgorithmFactory.h"
 #include <string>
 #include <vector>
+#include <mpi.h>
 
 #include "../tools/SpotifyFrameReader.h"
 #include "../tools/SpotifyFrameUtils.h"
@@ -24,6 +25,9 @@ void printUsage()
 
 int main(int argc, char *argv[])
 {
+    // Initialize MPI
+    MPI_Init(&argc, &argv);
+
     // Check if the number of arguments is correct (5 total: executable + k + max_iterations + tolerance + algorithm_id)
     if (argc != 5)
     {
@@ -95,5 +99,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Kill MPI
+    MPI_Finalize();
     return 0;
 }

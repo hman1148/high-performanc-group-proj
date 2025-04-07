@@ -72,7 +72,7 @@ __global__ void normalizeCentroidsKernel(float *centroids, int *clusterCounts, i
 {
     int clusterId = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (clusterId < k && clusterCounts[clusterId > 0])
+    if (clusterId < k && clusterCounts[clusterId] > 0)
     {
         for (int j = 0; j < numDimensions; ++j)
         {

@@ -46,8 +46,8 @@ namespace SpotifyGenreRevealParty
         // Host mem
         std::vector<float> m_host_flat_data;
         std::vector<float> m_host_centroids;
-        std::vector<float> m_host_cluster_assignments;
-        std::vector<float> m_global_cluster_assignments;
+        std::vector<int> m_host_cluster_assignments;
+        std::vector<int> m_global_cluster_assignments;
 
         // methods
         void initializeMPI();

@@ -8,6 +8,7 @@
 #include "../models/SharedCpu.h"
 
 #include "../gpu/SharedGPU.cuh"
+#include "../gpu/GlobalGPU.cuh"
 
 #include <stdexcept>
 
@@ -24,7 +25,7 @@ std::unique_ptr<IAlgorithm> createAlgorithm(int choice)
     case 4:
         return std::make_unique<DistributedCpu>();
     case 5:
-        return std::make_unique<DistributedGpu>();
+        return std::make_unique<SpotifyGenreRevealParty::GlobalGPU>(10, 100);
     default:
         throw std::invalid_argument("Invalid choice. Please enter a number between 1 and 5.");
     }
