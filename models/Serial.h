@@ -55,6 +55,7 @@ private:
                 // Stop the timer and calculate elapsed time
                 const auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
+                std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
                 break; // Exit early if the centroids have converged
             }
         }
@@ -64,6 +65,7 @@ private:
             // Stop the timer and calculate elapsed time
             const auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> duration = end - start;
+            std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
         }
 
         utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");

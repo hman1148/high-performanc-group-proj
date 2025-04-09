@@ -42,6 +42,7 @@ private:
                 // Stop the timer and calculate elapsed time
                 const auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
+                std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
                 converged = true;
                 break;
             }
@@ -51,6 +52,7 @@ private:
             // Stop the timer and calculate elapsed time
             const auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> duration = end - start;
+            std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
         }
 
         utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
