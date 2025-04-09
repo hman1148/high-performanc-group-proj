@@ -547,9 +547,38 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
     // Step 5. Gather results
     this->gatherResults(data);
 
-    // Extract songIds for saving to CSV (if we want)
+    // Step6. Save results to CSV on rank 0
     if (this->m_rank == 0)
     {
-        std::cout << "KMeans completed. Gathering results..." << std::endl;
+        std::cout << "Saving results to CSV..." << std::endl;
+        std::vector<std::string> songIds;
+        songIds.reserve(data.size());
+        for (std::size_t i = 0; i < data.size(); ++i)
+        {
+            songIds.push_back(std::to_string(i));
+        }
+
+        // Create output directory and save
+        try
+        {
+            std::string output_dir = "output";
+            int result = system(("mkdir -p " + output_dir).c_str());
+
+            if (result != 0)
+            {
+                std::cerr << "Warning: Could not create output directory" << std::endl;
+            }
+
+            // Save clustering results
+            std::string outputFile = "output/global_gpu_results.csv";
+            this->saveResultsToCSV(outputFile, songIds);
+        }
+        catch (const std::exception &ex)
+        {
+            std::cerr << "Error creating output directory: " << ex.what() << std::endl;
+        }
     }
+
+    // Free GPU memory
+    this->freeGPUMemory();
 }

@@ -120,10 +120,10 @@ namespace SpotifyGenreRevealParty
         }
 
         // Initialize GPU resources
-        initialize(featureData);
+        this->initialize(featureData);
 
         // Run KMeans on GPU
-        runKMeans();
+        this->runKMeans();
 
         // Update cluster assignments in the original data
         for (std::size_t i = 0; i < data.size(); ++i)
@@ -160,8 +160,35 @@ namespace SpotifyGenreRevealParty
             std::cout << std::endl;
         }
 
-        // Free memory
-        freeMemory();
+        std::vector<std::string> songIds;
+        songIds.reserve(data.size());
+        for (size_t i = 0; i < data.size(); ++i)
+        {
+            songIds.push_back(std::to_string(i));
+        }
+
+        // Save results to CSV automatically
+        try
+        {
+            // Create output directory if it doesn't exist
+            std::string outputDir = "output";
+            int result = system(("mkdir -p " + outputDir).c_str());
+            if (result != 0)
+            {
+                std::cerr << "Warning: Could not create output directory" << std::endl;
+            }
+
+            // Save clustering results
+            std::string outputFile = "output/shared_gpu_clusters.csv";
+            saveResultsToCSV(outputFile, songIds);
+            std::cout << "Results saved to " << outputFile << std::endl;
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error saving results: " << e.what() << std::endl;
+        }
+
+        this->freeMemory();
     }
 
     // Initialize GPU Resources
