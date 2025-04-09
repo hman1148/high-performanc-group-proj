@@ -34,37 +34,40 @@ private:
 
             if (hasConverged(prevCentroids, centroids, tolerance)) {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+                utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
                 break;
             }
         }
         if (!hasConverged(points, centroids, tolerance)) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
-            utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+            utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
         }
     }
 
     static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
                                         const std::vector<SpotifyGenreRevealParty::Point>& centroids, const int k) {
-#pragma omp parallel for
-        for (size_t i = 0; i < points.size(); ++i) {
+        #pragma omp parallel for
+        for (size_t i = 0; i < points.size(); ++i) // Must use index based range loops for OpenMP
+            {
             auto& point = points[i];
             double minDist = __DBL_MAX__;
             int clusterId = -1;
-
-            for (int j = 0; j < k; ++j) {
-                double dist = centroids[j].calculateDistance(point);
+            // Find the nearest centroid to the point
+            for (int i = 0; i < k; ++i) {
+                double dist = centroids[i].calculateDistance(point);
                 if (dist < minDist) {
                     minDist = dist;
-                    clusterId = j;
+                    clusterId = i;
                 }
             }
 
+            // Update the point's clusterId and its minimum distance
             point.minDist = minDist;
             point.clusterId = clusterId;
         }
     }
 
+    // Function to compute new centroids based on the points
     static void computeCentroids(std::vector<SpotifyGenreRevealParty::Point>& points,
                               std::vector<SpotifyGenreRevealParty::Point>& centroids, int k) {
         // This will hold the number of points in each cluster
@@ -75,21 +78,23 @@ private:
 
         // Parallelized sum computation using OpenMP
         #pragma omp parallel for
-        for (size_t i = 0; i < points.size(); ++i) {
-            int clusterId = points[i].clusterId;
+        for (size_t i = 0; i < points.size(); ++i) // Must use index based range loops for OpenMP
+        {
+            auto& point = points[i];
+            int clusterId = point.clusterId;
 
             // Update the number of points in the cluster (thread-private)
             #pragma omp atomic
             nPoints[clusterId]++;
 
             // Update the sum of the features (atomic per feature for each cluster)
-            for (size_t featureIndex = 0; featureIndex < points[i].features.size(); ++featureIndex) {
+            for (size_t featureIndex = 0; featureIndex < point.features.size(); ++featureIndex) {
                 #pragma omp atomic
-                sum[clusterId][featureIndex] += points[i].features[featureIndex];
+                sum[clusterId][featureIndex] += point.features[featureIndex];
             }
 
             // Min distance reset
-            points[i].minDist = __DBL_MAX__;
+            point.minDist = __DBL_MAX__;
         }
 
         // After parallel loop, compute centroids
