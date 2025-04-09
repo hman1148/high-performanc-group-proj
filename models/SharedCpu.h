@@ -8,6 +8,7 @@
 #include <random>
 #include <vector>
 #include <iostream>
+#include <chrono>
 
 class SharedCpu : public IAlgorithm
 {
@@ -19,6 +20,9 @@ public:
 
 private:
     static void sharedMemoryParallelCpu(std::vector<SpotifyGenreRevealParty::Point>& points, const int k, const int dimensions, const int maxIterations, const double tolerance) {
+        // Start the timer
+        auto start = std::chrono::high_resolution_clock::now();
+
         auto centroids = generateCentroids(k, dimensions);
         bool converged = false;
 
@@ -35,14 +39,21 @@ private:
 
             if (hasConverged(prevCentroids, centroids, tolerance)) {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
+                // Stop the timer and calculate elapsed time
+                const auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
                 converged = true;
                 break;
             }
         }
-        utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
         if (!converged) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
+            // Stop the timer and calculate elapsed time
+            const auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> duration = end - start;
         }
+
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
     }
 
     static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,

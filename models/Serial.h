@@ -13,6 +13,7 @@
 #include <ctime>
 #include "../models/Point.h"
 # include "../tools/utils.h"
+#include <chrono>
 
 class Serial final : public IAlgorithm
 {
@@ -27,6 +28,9 @@ public:
 private:
     static void serial(std::vector<SpotifyGenreRevealParty::Point> &points, const int k, const int dimensions, const int maxIterations, const double tolerance)
     {
+        // Start the timer
+        auto start = std::chrono::high_resolution_clock::now();
+
         auto centroids = generateCentroids(k, dimensions);
         bool converged = false;
 
@@ -48,14 +52,21 @@ private:
             {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
                 converged = true;
+                // Stop the timer and calculate elapsed time
+                const auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
                 break; // Exit early if the centroids have converged
             }
         }
-        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
 
-        if (converged) {
+        if (!converged) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
+            // Stop the timer and calculate elapsed time
+            const auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> duration = end - start;
         }
+
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
     }
 
     // Function to assign points to the closest centroid
