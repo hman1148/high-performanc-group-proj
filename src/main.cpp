@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    const std::string csvFile = "data/tracks_features.csv";
-    const std::string binaryCache = "data/points_cache.bin";
+    const std::string csvFile = "../data/tracks_features.csv";
+    const std::string binaryCache = "../data/points_cache.bin";
 
     std::vector<Point> points;
 
