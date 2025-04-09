@@ -13,6 +13,7 @@
 #include <ctime>
 #include "../models/Point.h"
 # include "../tools/utils.h"
+#include <chrono>
 
 class Serial final : public IAlgorithm
 {
@@ -27,7 +28,11 @@ public:
 private:
     static void serial(std::vector<SpotifyGenreRevealParty::Point> &points, const int k, const int dimensions, const int maxIterations, const double tolerance)
     {
+        // Start the timer
+        auto start = std::chrono::high_resolution_clock::now();
+
         auto centroids = generateCentroids(k, dimensions);
+        bool converged = false;
 
         for (int iter = 0; iter < maxIterations; ++iter)
         { // Iterate for maxIterations times
@@ -46,14 +51,24 @@ private:
             if (hasConverged(prevCentroids, centroids, tolerance))
             {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+                converged = true;
+                // Stop the timer and calculate elapsed time
+                const auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
                 break; // Exit early if the centroids have converged
             }
         }
-        if (!hasConverged(points, centroids, tolerance)) {
+
+        if (!converged) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
-            utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+            // Stop the timer and calculate elapsed time
+            const auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> duration = end - start;
+            std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
         }
+
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
     }
 
     // Function to assign points to the closest centroid

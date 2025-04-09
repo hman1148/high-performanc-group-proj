@@ -12,6 +12,8 @@ def read_results(file_path):
         section = None  # Track if reading Points or Centroids
         for line in file:
             line = line.strip()
+            if not line or line.startswith("#"):  # skip empty lines
+                continue
             if line.startswith("# Points"):
                 section = "points"
                 continue

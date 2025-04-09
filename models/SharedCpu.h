@@ -8,6 +8,7 @@
 #include <random>
 #include <vector>
 #include <iostream>
+#include <chrono>
 
 class SharedCpu : public IAlgorithm
 {
@@ -19,7 +20,11 @@ public:
 
 private:
     static void sharedMemoryParallelCpu(std::vector<SpotifyGenreRevealParty::Point>& points, const int k, const int dimensions, const int maxIterations, const double tolerance) {
+        // Start the timer
+        auto start = std::chrono::high_resolution_clock::now();
+
         auto centroids = generateCentroids(k, dimensions);
+        bool converged = false;
 
         for (int iter = 0; iter < maxIterations; ++iter) {
             std::cout << "Iteration " << iter + 1 << std::endl;
@@ -34,65 +39,96 @@ private:
 
             if (hasConverged(prevCentroids, centroids, tolerance)) {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+                // Stop the timer and calculate elapsed time
+                const auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
+                converged = true;
                 break;
             }
         }
-        if (!hasConverged(points, centroids, tolerance)) {
+        if (!converged) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
-            utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+            // Stop the timer and calculate elapsed time
+            const auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> duration = end - start;
+            std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
         }
+
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
     }
 
     static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
                                         const std::vector<SpotifyGenreRevealParty::Point>& centroids, const int k) {
-#pragma omp parallel for
-        for (size_t i = 0; i < points.size(); ++i) {
+        #pragma omp parallel for
+        for (size_t i = 0; i < points.size(); ++i) // Must use index based range loops for OpenMP
+            {
             auto& point = points[i];
             double minDist = __DBL_MAX__;
             int clusterId = -1;
-
-            for (int j = 0; j < k; ++j) {
-                double dist = centroids[j].calculateDistance(point);
+            // Find the nearest centroid to the point
+            for (int i = 0; i < k; ++i) {
+                double dist = centroids[i].calculateDistance(point);
                 if (dist < minDist) {
                     minDist = dist;
-                    clusterId = j;
+                    clusterId = i;
                 }
             }
 
+            // Update the point's clusterId and its minimum distance
             point.minDist = minDist;
             point.clusterId = clusterId;
         }
     }
 
+    // Function to compute new centroids based on the points
     static void computeCentroids(std::vector<SpotifyGenreRevealParty::Point>& points,
                               std::vector<SpotifyGenreRevealParty::Point>& centroids, int k) {
         // This will hold the number of points in each cluster
         std::vector<int> nPoints(k, 0);
 
-        // This will hold the sum of features for each cluster
+        // This will hold the sum of features for each cluster (thread-private)
         std::vector<std::vector<double>> sum(k, std::vector<double>(centroids[0].features.size(), 0.0));
 
         // Parallelized sum computation using OpenMP
-        #pragma omp parallel for
-        for (size_t i = 0; i < points.size(); ++i) {
-            int clusterId = points[i].clusterId;
+        #pragma omp parallel
+        {
+            // Thread-local storage for partial sums and point counts
+            std::vector<int> localNPoints(k, 0);
+            std::vector<std::vector<double>> localSum(k, std::vector<double>(centroids[0].features.size(), 0.0));
 
-            // Update the number of points in the cluster (thread-private)
-            #pragma omp atomic
-            nPoints[clusterId]++;
+            // Parallel loop for assigning points to clusters and summing feature values
+            #pragma omp for
+            for (size_t i = 0; i < points.size(); ++i) {
+                auto& point = points[i];
+                int clusterId = point.clusterId;
 
-            // Update the sum of the features (atomic per feature for each cluster)
-            for (size_t featureIndex = 0; featureIndex < points[i].features.size(); ++featureIndex) {
-                #pragma omp atomic
-                sum[clusterId][featureIndex] += points[i].features[featureIndex];
+                // Update the number of points in the cluster (thread-local)
+                localNPoints[clusterId]++;
+
+                // Update the sum of the features (thread-local per cluster)
+                for (size_t featureIndex = 0; featureIndex < point.features.size(); ++featureIndex) {
+                    localSum[clusterId][featureIndex] += point.features[featureIndex];
+                }
+
+                // Min distance reset (not needed in this function but keeping for consistency)
+                point.minDist = __DBL_MAX__;
             }
 
-            // Min distance reset
-            points[i].minDist = __DBL_MAX__;
+            // After the loop, combine the results from each thread
+            #pragma omp critical
+            {
+                for (int i = 0; i < k; ++i) {
+                    nPoints[i] += localNPoints[i];
+                    for (size_t featureIndex = 0; featureIndex < centroids[0].features.size(); ++featureIndex) {
+                        sum[i][featureIndex] += localSum[i][featureIndex];
+                    }
+                }
+            }
         }
 
         // After parallel loop, compute centroids
+        #pragma omp parallel for
         for (int i = 0; i < k; ++i) {
             if (nPoints[i] > 0) {
                 for (size_t featureIndex = 0; featureIndex < centroids[0].features.size(); ++featureIndex) {
