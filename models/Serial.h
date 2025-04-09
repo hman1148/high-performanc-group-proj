@@ -28,6 +28,7 @@ private:
     static void serial(std::vector<SpotifyGenreRevealParty::Point> &points, const int k, const int dimensions, const int maxIterations, const double tolerance)
     {
         auto centroids = generateCentroids(k, dimensions);
+        bool converged = false;
 
         for (int iter = 0; iter < maxIterations; ++iter)
         { // Iterate for maxIterations times
@@ -46,13 +47,14 @@ private:
             if (hasConverged(prevCentroids, centroids, tolerance))
             {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+                converged = true;
                 break; // Exit early if the centroids have converged
             }
         }
-        if (!hasConverged(points, centroids, tolerance)) {
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+
+        if (converged) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
-            utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
         }
     }
 

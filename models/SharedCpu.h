@@ -20,6 +20,7 @@ public:
 private:
     static void sharedMemoryParallelCpu(std::vector<SpotifyGenreRevealParty::Point>& points, const int k, const int dimensions, const int maxIterations, const double tolerance) {
         auto centroids = generateCentroids(k, dimensions);
+        bool converged = false;
 
         for (int iter = 0; iter < maxIterations; ++iter) {
             std::cout << "Iteration " << iter + 1 << std::endl;
@@ -34,13 +35,13 @@ private:
 
             if (hasConverged(prevCentroids, centroids, tolerance)) {
                 std::cout << "Convergence reached after " << iter + 1 << " iterations." << std::endl;
-                utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
+                converged = true;
                 break;
             }
         }
-        if (!hasConverged(points, centroids, tolerance)) {
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
+        if (!converged) {
             std::cout << "Convergence was not reached after " << maxIterations << " iterations." << std::endl;
-            utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
         }
     }
 
@@ -98,6 +99,7 @@ private:
         }
 
         // After parallel loop, compute centroids
+        #pragma omp parallel for
         for (int i = 0; i < k; ++i) {
             if (nPoints[i] > 0) {
                 for (size_t featureIndex = 0; featureIndex < centroids[0].features.size(); ++featureIndex) {
