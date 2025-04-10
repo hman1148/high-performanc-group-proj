@@ -10,7 +10,7 @@ using namespace SpotifyGenreRevealParty;
 
 void printUsage()
 {
-    std::cerr << "Usage: <executable> <k> <max_iterations> <tolerance> <algorithm_id>" << std::endl;
+    std::cerr << "Usage: <executable> <k> <max_iterations> <tolerance> <dataset_percentage> <algorithm_id>" << std::endl;
     std::cerr << "  k: Number of clusters (positive integer)" << std::endl;
     std::cerr << "  max_iterations: Maximum number of iterations (positive integer)" << std::endl;
     std::cerr << "  tolerance: Convergence tolerance (positive float)" << std::endl;
