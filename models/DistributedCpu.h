@@ -153,6 +153,9 @@ private:
                         centroids[i].features[j] =
                             globalFeaturesSums[i][j] / globalClustersSums[i];
                     }
+                } else {
+                    //  Reinitialize the centroid if it has no assigned points
+                    std::fill(centroids[i].features.begin(), centroids[i].features.end(), 0.0f);
                 }
             }
 
