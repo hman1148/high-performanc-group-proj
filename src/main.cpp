@@ -64,14 +64,15 @@ int main(int argc, char *argv[]) {
 
     std::vector<Point> points;
 
-    try {
-        points = getOrLoadPoints(csvFile, binaryCache, rank);
-    } catch (const std::exception &e) {
-        if (rank == 0) {
+    if (rank == 0) {
+        try {
+            points = getOrLoadPoints(csvFile, binaryCache);
+        } catch (const std::exception &e) {
             std::cerr << "Failed to load data: " << e.what() << std::endl;
+            return 1;
         }
-        return 1;
     }
+
 
     const size_t totalSize = points.size();
     const auto newSize = static_cast<size_t>((size / 100.0) * totalSize); // cast to ensure decimal math
