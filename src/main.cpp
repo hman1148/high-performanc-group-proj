@@ -14,6 +14,7 @@ void printUsage()
     std::cerr << "  k: Number of clusters (positive integer)" << std::endl;
     std::cerr << "  max_iterations: Maximum number of iterations (positive integer)" << std::endl;
     std::cerr << "  tolerance: Convergence tolerance (positive float)" << std::endl;
+    std::cerr << "  data_size: What percentage of the data set to use (1 to 100)" << std::endl;
     std::cerr << "  algorithm_id: ID of the algorithm to run (1 to 5)" << std::endl;
     std::cerr << "\tSerial = 1\n"
                  "\tShared memory parallel CPU = 2\n"
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
     MPI_Init(&argc, &argv);
 
     // Check if the number of arguments is correct (5 total: executable + k + max_iterations + tolerance + algorithm_id)
-    if (argc != 5)
+    if (argc != 6)
     {
         printUsage();
         return 1;
@@ -39,11 +40,12 @@ int main(int argc, char *argv[])
     int k = std::stoi(argv[1]);
     int max_iterations = std::stoi(argv[2]);
     double tolerance = std::stod(argv[3]);
-    int algorithm_id = std::stoi(argv[4]);
+    int size = std::stoi(argv[4]);
+    int algorithm_id = std::stoi(argv[5]);
 
     std::cout << "Validating arguments..." << std::endl;
     // Validate k, max_iterations, tolerance, and algorithm_id
-    if (k <= 0 || max_iterations <= 0 || tolerance <= 0 || algorithm_id < 1 || algorithm_id > 5)
+    if (k <= 0 || max_iterations <= 0 || tolerance <= 0 || size < 1 || size > 100 || algorithm_id < 1 || algorithm_id > 5)
     {
         printUsage();
         return 1;
@@ -63,6 +65,11 @@ int main(int argc, char *argv[])
         std::cerr << "Failed to load data: " << e.what() << std::endl;
         return 1;
     }
+
+    const size_t totalSize = points.size();
+    const auto newSize = (size / 100 * totalSize);
+    points.resize(newSize);
+
 
     minMaxScale(points); // Min-max scale based on Points
 
