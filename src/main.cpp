@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     std::vector<Point> points;
 
     try {
-        points = getOrLoadPoints(csvFile, binaryCache, ~rank);
+        points = getOrLoadPoints(csvFile, binaryCache, rank);
     } catch (const std::exception &e) {
         if (rank == 0) {
             std::cerr << "Failed to load data: " << e.what() << std::endl;
