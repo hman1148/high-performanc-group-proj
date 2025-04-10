@@ -23,6 +23,14 @@ private:
         // Start the timer
         auto start = std::chrono::high_resolution_clock::now();
 
+        // Report OpenMP thread count
+        #pragma omp parallel
+        {
+        #pragma omp master
+            std::cout << "Using " << omp_get_num_threads() << " OpenMP threads.\n";
+        }
+
+
         auto centroids = generateCentroids(k, dimensions);
         bool converged = false;
 
