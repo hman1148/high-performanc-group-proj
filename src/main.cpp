@@ -64,33 +64,68 @@ int main(int argc, char *argv[]) {
 
     std::vector<Point> points;
 
+    if (algorithm_id != 3) { // Not distributed
+        if (rank == 0) {
+            try {
+                points = getOrLoadPoints(csvFile, binaryCache);
+
+                const size_t totalSize = points.size();
+                const auto newSize = static_cast<size_t>((size / 100.0) * totalSize);
+                std::vector<Point> subset(points.begin(), points.begin() + newSize);
+                points = std::move(subset);
+
+                std::cout << "Scaling data ..." << std::endl;
+                minMaxScale(points);
+            } catch (const std::exception &e) {
+                std::cerr << "Failed to load data: " << e.what() << std::endl;
+                return 1;
+            }
+        }
+    } else {
+        // For distributed: let rank 0 load, and pass to `run()`
+        if (rank == 0) {
+            try {
+                points = getOrLoadPoints(csvFile, binaryCache);
+            } catch (const std::exception &e) {
+                std::cerr << "Failed to load data: " << e.what() << std::endl;
+                return 1;
+            }
+
+            const size_t totalSize = points.size();
+            auto newSize = static_cast<size_t>((size / 100.0) * totalSize); // cast to ensure decimal math
+
+            // Ensure we don't go out of bounds
+            if (newSize > totalSize) {
+                newSize = totalSize;
+            }
+            if (rank == 0) {
+                std::cout << "Slicing to " << newSize << " of " << totalSize << " points\n";
+            }
+
+            std::vector<Point> subset(points.begin(), points.begin() + newSize);
+            points = std::move(subset); // replace original with subset
+
+
+            std::cout << "Scaling data ..." << std::endl;
+            minMaxScale(points); // Min-max scale based on Points
+
+        }
+
+    }
+
+    size_t dimension = 0;
+
     if (rank == 0) {
-        try {
-            points = getOrLoadPoints(csvFile, binaryCache);
-        } catch (const std::exception &e) {
-            std::cerr << "Failed to load data: " << e.what() << std::endl;
+        if (points.empty()) {
+            std::cerr << "Error: No data available to determine the vector dimension." << std::endl;
+            MPI_Finalize();
             return 1;
         }
+        dimension = points[0].features.size();
     }
 
-
-    const size_t totalSize = points.size();
-    const auto newSize = static_cast<size_t>((size / 100.0) * totalSize); // cast to ensure decimal math
-    std::vector<Point> subset(points.begin(), points.begin() + newSize);
-    points = std::move(subset); // replace original with subset
-
-    if (rank == 0) {
-        std::cout << "Scaling data ..." << std::endl;
-        minMaxScale(points); // Min-max scale based on Points
-    }
-
-
-    size_t dimension = points.empty() ? 0 : points[0].features.size();
-
-    if (dimension == 0 && rank == 0) {
-        std::cerr << "Error: No data available to determine the vector dimension." << std::endl;
-        return 1;
-    }
+    // Broadcast the dimension to all ranks
+    MPI_Bcast(&dimension, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 
     // Create the algorithm and run it with the specified parameters
     try {
