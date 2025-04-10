@@ -67,14 +67,14 @@ def visualize_clusters(file_name, output_path, show_plot=True):
     plt.tight_layout()
     os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
     plt.savefig(output_path, dpi=300)
-    print(f"✅ Plot saved to: {output_path}")
+    print(f"Plot saved to: {output_path}")
 
     if show_plot:
         plt.show()
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python visualize_clusters.py <results_file.csv>")
+        print("Usage: python3 visualize_clusters.py <results_file.csv>")
         sys.exit(1)
 
     input_file = sys.argv[1]

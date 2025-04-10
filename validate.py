@@ -45,7 +45,7 @@ def compare_files(filenames):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python check_consistency.py file1.csv file2.csv [file3.csv ...]")
+        print("Usage: python3 validate.py file1.csv file2.csv [file3.csv ...]")
         sys.exit(1)
 
     compare_files(sys.argv[1:])

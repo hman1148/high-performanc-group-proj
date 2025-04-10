@@ -14,7 +14,7 @@ void printUsage()
     std::cerr << "  k: Number of clusters (positive integer)" << std::endl;
     std::cerr << "  max_iterations: Maximum number of iterations (positive integer)" << std::endl;
     std::cerr << "  tolerance: Convergence tolerance (positive float)" << std::endl;
-    std::cerr << "  data_size: What percentage of the data set to use (1 to 100)" << std::endl;
+    std::cerr << "  dataset_percentage: What percentage of the data set to use (1 to 100)" << std::endl;
     std::cerr << "  algorithm_id: ID of the algorithm to run (1 to 5)" << std::endl;
     std::cerr << "\tSerial = 1\n"
                  "\tShared memory parallel CPU = 2\n"

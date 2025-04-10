@@ -101,13 +101,14 @@ There are five implementations of the KMeans algorithm available for you to run:
 To run any of the implementations, you will structure a command like the following 
 (assuming you are still in the `build` directory):
 
-`./class_project <k> <max_iterations> <tolerance> <algorithm_id>`
+`./class_project <k> <max_iterations> <tolerance> <dataset_percentage> <algorithm_id>`
 
 - `k`: This is setting the `k` value, or number of centroids, for the KMeans Algorithm. 
 It should be an integer greater than or equal to 1.
 - `max_iterations`: This is setting the maximum number of iterations that the KMeans Algorithm 
 will perform if convergence is not reached earlier.It should be a positive integer greater than or equal to 1.
 - `tolerance`: This variable sets the  tolerance minimum centroid movement required to continue iterations; used to determine convergence.
+- `dataset_percentage`: This argument determines the size of the dataset. Think of it as a percentage, using numbers 1 to 100. This will determine what percentage of the dataset you use for computation.
 - `algorithm_id`: Selects which implementation to run for the K-Means algorithm.
 
     | ID | Implementation         |
@@ -120,10 +121,6 @@ will perform if convergence is not reached earlier.It should be a positive integ
 
 ***Note***: Your first time running the program, you will notice that reading the `data/tracks_features.csv` file takes a few minutes. After the program has ran once, it will save the track features as a binary file, and reading will be much faster.
 
-### Configuring the Problem Size
-
-TODO: Make it so that after picking an implementation, the user can select what percentage of the track_features they would want to perform algoithm on
-
 ### Configuring Number of Threads (CPU)
 
 TODO: Make it so that after picking an cpu implementation, the user is shown how many possible threads they can use and allow them to pick how many they can use
@@ -131,3 +128,30 @@ TODO: Make it so that after picking an cpu implementation, the user is shown how
 ### Configuring Block Size (GPU)
 
 Todo: After selecting a gpu implementation, the user can select the block size to use
+
+--- 
+
+### Running the Validation Script
+
+Follow the steps above to load the correct modules. Then navigate to the `root` directory of the project.
+From there, run:
+
+`python3 validate.py <file1.csv> <file2.csv> [file3.csv ...]`.
+
+For example, to compare the shared memory and the parallel memory CPU implementations, the command becomes:
+
+`python3 validate.py serial_results.csv shared_cpu_results.csv`
+
+
+--- 
+
+### Running the Visualization Script
+
+Follow the steps above to load the correct modules. Then navigate to the `root` directory of the project. From there, run:
+
+`python3 visualize_clusters.py <file.csv>`
+
+For example, to visualize the output of the serial implementation, the command becomes:
+
+`python3 visualize_clusters.py serial_results.csv`
+
