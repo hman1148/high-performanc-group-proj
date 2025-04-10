@@ -64,25 +64,48 @@ int main(int argc, char *argv[]) {
 
     std::vector<Point> points;
 
-    if (rank == 0) {
-        try {
-            points = getOrLoadPoints(csvFile, binaryCache);
-        } catch (const std::exception &e) {
-            std::cerr << "Failed to load data: " << e.what() << std::endl;
-            return 1;
+    if (algorithm_id != 3) { // Not distributed
+        if (rank == 0) {
+            try {
+                points = getOrLoadPoints(csvFile, binaryCache);
+
+                const size_t totalSize = points.size();
+                const auto newSize = static_cast<size_t>((size / 100.0) * totalSize);
+                std::vector<Point> subset(points.begin(), points.begin() + newSize);
+                points = std::move(subset);
+
+                std::cout << "Scaling data ..." << std::endl;
+                minMaxScale(points);
+            } catch (const std::exception &e) {
+                std::cerr << "Failed to load data: " << e.what() << std::endl;
+                return 1;
+            }
         }
+    } else {
+        // For distributed: let rank 0 load, and pass to `run()`
+        if (rank == 0) {
+            try {
+                points = getOrLoadPoints(csvFile, binaryCache);
+            } catch (const std::exception &e) {
+                std::cerr << "Failed to load data: " << e.what() << std::endl;
+                return 1;
+            }
+
+            const size_t totalSize = points.size();
+            const auto newSize = static_cast<size_t>((size / 100.0) * totalSize); // cast to ensure decimal math
+            std::vector<Point> subset(points.begin(), points.begin() + newSize);
+            points = std::move(subset); // replace original with subset
+
+
+            std::cout << "Scaling data ..." << std::endl;
+            minMaxScale(points); // Min-max scale based on Points
+
+        }
+
     }
 
 
-    const size_t totalSize = points.size();
-    const auto newSize = static_cast<size_t>((size / 100.0) * totalSize); // cast to ensure decimal math
-    std::vector<Point> subset(points.begin(), points.begin() + newSize);
-    points = std::move(subset); // replace original with subset
 
-    if (rank == 0) {
-        std::cout << "Scaling data ..." << std::endl;
-        minMaxScale(points); // Min-max scale based on Points
-    }
 
 
     size_t dimension = points.empty() ? 0 : points[0].features.size();
