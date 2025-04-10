@@ -26,7 +26,7 @@ may not be available on certain machines, and you will not be able to run the GP
 
 To select your interactive allocation, your command will look something like this: 
 
-`salloc -n 1 -N 1 -t 0:15:00 -p notchpeak-gpu -A notchpeak-gpu --gres=GPU`
+`salloc -n 1 -N 1 -t 0:15:00 -p notchpeak-gpu -A notchpeak-gpu --gres=gpu`
 
 ---
 
