@@ -55,7 +55,7 @@ private:
             std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
         }
 
-        utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.txt");
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/shared_cpu_results.csv");
     }
 
     static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
