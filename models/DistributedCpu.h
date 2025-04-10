@@ -120,7 +120,7 @@ private:
             assignPointsToClusters(localPoints, centroids, k);
 
             // Compute partial sums
-            std::vector<std::vector<float>> localFeaturesSums(k, std::vector<float>(dimensions, 0.0));
+            std::vector<std::vector<double>> localFeaturesSums(k, std::vector<double>(dimensions, 0.0));
             std::vector<int> localClustersSums(k, 0);
 
             for (auto &point : localPoints) {
@@ -131,14 +131,14 @@ private:
             }
 
             // Allreduce partial sums
-            std::vector<std::vector<float>> globalFeaturesSums(k, std::vector<float>(dimensions, 0.0));
+            std::vector<std::vector<double>> globalFeaturesSums(k, std::vector<double>(dimensions, 0.0));
             std::vector<int> globalClustersSums(k, 0);
 
             MPI_Allreduce(localClustersSums.data(), globalClustersSums.data(),
                           k, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
             for (int i = 0; i < k; i++) {
                 MPI_Allreduce(localFeaturesSums[i].data(), globalFeaturesSums[i].data(),
-                              dimensions, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+                              dimensions, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
             }
 
             // Update centroids
