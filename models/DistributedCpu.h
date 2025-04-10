@@ -248,7 +248,7 @@ private:
 
     // ... (unchanged helper methods) ...
 
-    void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
+    static void assignPointsToClusters(std::vector<SpotifyGenreRevealParty::Point>& points,
                                 const std::vector<SpotifyGenreRevealParty::Point>& centroids,
                                 int k)
     {
@@ -267,7 +267,7 @@ private:
         }
     }
 
-    bool hasConverged(const std::vector<SpotifyGenreRevealParty::Point>& prev,
+    static bool hasConverged(const std::vector<SpotifyGenreRevealParty::Point>& prev,
                       const std::vector<SpotifyGenreRevealParty::Point>& curr,
                       double tolerance)
     {
