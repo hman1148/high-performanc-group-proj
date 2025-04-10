@@ -67,8 +67,9 @@ int main(int argc, char *argv[])
     }
 
     const size_t totalSize = points.size();
-    const auto newSize = (size / 100 * totalSize);
-    points.resize(newSize);
+    const auto newSize = static_cast<size_t>((size / 100.0) * totalSize);  // cast to ensure decimal math
+    std::vector<Point> subset(points.begin(), points.begin() + newSize);
+    points = std::move(subset);  // replace original with subset
 
 
     minMaxScale(points); // Min-max scale based on Points
