@@ -138,8 +138,6 @@ namespace SpotifyGenreRevealParty {
             }
         }
 
-        minMaxScale(points);
-
         try {
             writePointsToBinary(binaryCache, points);
                 std::cout << "Cached scaled points to binary file." << std::endl;
