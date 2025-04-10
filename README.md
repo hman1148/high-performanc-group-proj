@@ -39,6 +39,34 @@ Use the following commands to load the `cuda` and `mpi` modules. These are neces
 
 `module load mpi`
 
+
+### Loading Modules for Validation
+
+If you wish to use the `validation.py` script to check the results of the output .csv files, then also load `pandas` with:
+
+`module load pandas`
+
+### Loading Module for Visualization
+
+If you wish to visualize the clusters, then we recommend installing your own Python module. 
+
+We used the following commands, but further instructions can be found on 
+[chpc.utah.edu](https://www.chpc.utah.edu/documentation/software/python-anaconda.php)
+
+```bash
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash ./Miniforge3-Linux-x86_64.sh -s -b -p $HOME/software/pkg/miniforge3
+
+mkdir -p $HOME/MyModules/miniforge3
+cp /uufs/chpc.utah.edu/sys/installdir/python/modules/miniforge3/latest.lua $HOME/MyModules/miniforge3
+
+module use $HOME/MyModules
+module load miniforge3/latest
+
+mamba install pandas numpy matplotlib
+```
+After this, you should be good to go, but again refer to CHPCs documentation if you run into any issues.cd 
+
 ---
 
 ### Building the Executable

@@ -2,8 +2,13 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import os
 
-def visualize_clusters(file_path, output_path="cluster_plot.png", show_plot=True):
+OUTPUT_DIRECTORY = "output"
+
+def visualize_clusters(file_name, output_path, show_plot=True):
+    file_path = os.path.join(OUTPUT_DIRECTORY, file_name)
+
     df = pd.read_csv(file_path)
 
     # Filter out only the points (not centroids)
@@ -38,6 +43,7 @@ def visualize_clusters(file_path, output_path="cluster_plot.png", show_plot=True
     ax.add_artist(legend)
 
     plt.tight_layout()
+    os.makedirs("output", exist_ok=True)
     plt.savefig(output_path)
     print(f"Plot saved to: {output_path}")
 
@@ -46,16 +52,18 @@ def visualize_clusters(file_path, output_path="cluster_plot.png", show_plot=True
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python visualize_clusters.py path/to/results.csv")
+        print("Usage: python visualize_clusters.py <results_file.csv>")
         sys.exit(1)
+
+
 
     input_file = sys.argv[1]
 
     # Generate default output file name
     if "_results.csv" in input_file:
         base_name = input_file.split("_results.csv")[0]
-        output_file = f"{base_name}_visualization.png"
+        output_file = f"./output/{base_name}_visualization.png"
     else:
-        output_file = "cluster_plot.png"  # fallback
+        output_file = "./output/cluster_plot.png"  # fallback
 
     visualize_clusters(input_file, output_file)
