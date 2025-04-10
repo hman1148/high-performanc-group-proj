@@ -6,7 +6,7 @@ OUTPUT_DIRECTORY = "output"
 
 def read_csv_results(file_path):
     """Reads clustering results from a CSV, separating points and centroids."""
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, index_col=False)
 
     # Split into points and centroids
     points = df[df["is_centroid"] == False].copy()
