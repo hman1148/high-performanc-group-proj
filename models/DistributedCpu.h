@@ -39,11 +39,16 @@ private:
         // Start the timer
         auto start = std::chrono::high_resolution_clock::now();
 
-        int totalPoints = fullData.size();
+        // Broadcast the total number of points to all ranks.
+        int totalPoints = 0;
+        if (rank == 0) {
+            totalPoints = fullData.size();
+        }
+        MPI_Bcast(&totalPoints, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
         std::vector<float> flatData;
 
-        // Same scatter logic
+        // All processes compute the same scatter parameters.
         std::vector<int> sendCounts(worldSize, 0);
         std::vector<int> displs(worldSize, 0);
 
@@ -52,7 +57,7 @@ private:
 
         for (int i = 0; i < worldSize; i++) {
             int pointsForRank = (i < remainder) ? (base + 1) : base;
-            sendCounts[i] = pointsForRank * dimensions; 
+            sendCounts[i] = pointsForRank * dimensions;
         }
 
         displs[0] = 0;
@@ -60,6 +65,7 @@ private:
             displs[i] = displs[i - 1] + sendCounts[i - 1];
         }
 
+        // Only rank 0 prepares the flat data array.
         if (rank == 0) {
             flatData.reserve(totalPoints * dimensions);
             for (int i = 0; i < totalPoints; i++) {
@@ -69,15 +75,16 @@ private:
             }
         }
 
+        // Scatter the flattened data to all processes.
         int localFloatCount = sendCounts[rank];
         std::vector<float> localData(localFloatCount);
 
-        MPI_Scatterv(rank == 0 ? flatData.data() : nullptr, 
+        MPI_Scatterv(rank == 0 ? flatData.data() : nullptr,
                      sendCounts.data(), displs.data(), MPI_FLOAT,
                      localData.data(), localFloatCount, MPI_FLOAT,
                      0, MPI_COMM_WORLD);
 
-        // Reconstruct local points
+        // Reconstruct local points.
         int localSize = localFloatCount / dimensions;
         std::vector<Point> localPoints;
         localPoints.reserve(localSize);
@@ -89,7 +96,7 @@ private:
             localPoints.emplace_back(features);
         }
 
-        // Generate or broadcast centroids
+        // Generate or broadcast centroids.
         std::vector<Point> centroids;
         std::vector<float> centroidsFlattened;
         if (rank == 0) {
@@ -116,14 +123,14 @@ private:
             }
         }
 
-        // Main k-means loop
+        // Main k-means loop.
         for (int iter = 0; iter < maxIterations; ++iter) {
             if (rank == 0)
                 std::cout << "Iteration " << iter + 1 << std::endl;
 
             assignPointsToClusters(localPoints, centroids, k);
 
-            // Compute partial sums
+            // Compute partial sums.
             std::vector<std::vector<double>> localFeaturesSums(k, std::vector<double>(dimensions, 0.0));
             std::vector<int> localClustersSums(k, 0);
 
@@ -134,7 +141,7 @@ private:
                 }
             }
 
-            // Allreduce partial sums
+            // Allreduce partial sums.
             std::vector<std::vector<double>> globalFeaturesSums(k, std::vector<double>(dimensions, 0.0));
             std::vector<int> globalClustersSums(k, 0);
 
@@ -145,7 +152,7 @@ private:
                               dimensions, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
             }
 
-            // Update centroids
+            // Update centroids.
             std::vector<Point> oldCentroids = centroids;
             for (int i = 0; i < k; ++i) {
                 if (globalClustersSums[i] > 0) {
@@ -154,12 +161,12 @@ private:
                             globalFeaturesSums[i][j] / globalClustersSums[i];
                     }
                 } else {
-                    //  Reinitialize the centroid if it has no assigned points
+                    // Reinitialize the centroid if it has no assigned points.
                     std::fill(centroids[i].features.begin(), centroids[i].features.end(), 0.0f);
                 }
             }
 
-            // Check convergence on rank 0
+            // Check convergence on rank 0.
             int doneYet = 0;
             if (rank == 0) {
                 if (hasConverged(oldCentroids, centroids, tolerance)) {
@@ -175,9 +182,9 @@ private:
             }
         }
 
-        // Build localFlatData
+        // Build localFlatData.
         int localNumPoints = localPoints.size();
-        int localDataSize = localNumPoints * (dimensions + 1); 
+        int localDataSize = localNumPoints * (dimensions + 1);
         std::vector<float> localFlatData;
         localFlatData.reserve(localDataSize);
 
@@ -190,15 +197,15 @@ private:
 
         // -- Now we gather variable-sized data from each rank.
 
-        // 1) Gather each rank's localDataSize into recvCounts
+        // 1) Gather each rank's localDataSize into recvCounts.
         std::vector<int> recvCounts(worldSize, 0);
         MPI_Gather(&localDataSize,               // what I'm sending
-                   1, MPI_INT,                   // I'm sending 1 integer
-                   rank == 0 ? recvCounts.data() : nullptr, 
+                   1, MPI_INT,                   // sending 1 integer
+                   rank == 0 ? recvCounts.data() : nullptr,
                    1, MPI_INT,
                    0, MPI_COMM_WORLD);
 
-        // 2) On rank 0, build recvDispls and allocate gatheredFlatData
+        // 2) On rank 0, build recvDispls and allocate gatheredFlatData.
         std::vector<int> recvDispls(worldSize);
         std::vector<float> gatheredFlatData;
         if (rank == 0) {
@@ -210,14 +217,14 @@ private:
             gatheredFlatData.resize(totalGatheredFloats);
         }
 
-        // 3) Gatherv the actual data
+        // 3) Gather the actual data.
         MPI_Gatherv(localFlatData.data(), localDataSize, MPI_FLOAT,
                     rank == 0 ? gatheredFlatData.data() : nullptr,
                     rank == 0 ? recvCounts.data()        : nullptr,
                     rank == 0 ? recvDispls.data()        : nullptr,
                     MPI_FLOAT, 0, MPI_COMM_WORLD);
 
-        // 4) Rank 0 reconstructs points from gatheredFlatData
+        // 4) Rank 0 reconstructs points from gatheredFlatData.
         if (rank == 0) {
             std::vector<Point> allPoints;
             allPoints.reserve(totalPoints);
@@ -226,14 +233,14 @@ private:
             for (int r = 0; r < worldSize; r++) {
                 int count = recvCounts[r];
                 int numPointsFromRank = count / (dimensions + 1);
-                
+
                 for (int p = 0; p < numPointsFromRank; p++) {
                     std::vector<float> features(dimensions);
                     for (int d = 0; d < dimensions; d++) {
-                        features[d] = gatheredFlatData[offset + p*(dimensions + 1) + d];
+                        features[d] = gatheredFlatData[offset + p * (dimensions + 1) + d];
                     }
                     int clusterId = static_cast<int>(
-                        gatheredFlatData[offset + p*(dimensions + 1) + dimensions]
+                        gatheredFlatData[offset + p * (dimensions + 1) + dimensions]
                     );
                     Point tmpPoint(features);
                     tmpPoint.clusterId = clusterId;
@@ -286,7 +293,7 @@ private:
         std::vector<SpotifyGenreRevealParty::Point> centroids;
 
         std::default_random_engine generator(100);
-        std::uniform_real_distribution<float> dis(0.0f, 1.0f); 
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
 
         for (int i = 0; i < k; i++) {
             std::vector<float> feats;
@@ -301,5 +308,3 @@ private:
 };
 
 #endif // DISTRIBUTEDCPU_H
-//AI disclaimer: I used ai to sweep the code and convert it from gather and scatter to gatherv and scatterv after realizing that it would 
-//not work if the data disnt divide evenly into the ranks
