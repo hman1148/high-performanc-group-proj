@@ -9,6 +9,7 @@
 #include <iostream>
 #include "../models/Point.h"
 #include "../tools/utils.h"
+#include <chrono>
 
 class DistributedCpu : public IAlgorithm {
 public:
@@ -34,6 +35,9 @@ private:
                            int worldSize)
     {
         using namespace SpotifyGenreRevealParty;
+
+        // Start the timer
+        auto start = std::chrono::high_resolution_clock::now();
 
         int totalPoints = fullData.size();
 
@@ -235,6 +239,9 @@ private:
                 offset += count;
             }
 
+            const auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> duration = end - start;
+            std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
             utils::writePointsAndCentroidsToFile(allPoints, centroids, "../output/distributed_cpu_results.csv");
         }
     }
