@@ -81,8 +81,8 @@ int main(int argc, char *argv[]) {
 
     if (rank == 0) {
         std::cout << "Scaling data ..." << std::endl;
+        minMaxScale(points); // Min-max scale based on Points
     }
-    minMaxScale(points); // Min-max scale based on Points
 
 
     size_t dimension = points.empty() ? 0 : points[0].features.size();
