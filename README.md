@@ -80,12 +80,15 @@ It should be an integer greater than or equal to 1.
 - `max_iterations`: This is setting the maximum number of iterations that the KMeans Algorithm 
 will perform if convergence is not reached earlier.It should be a positive integer greater than or equal to 1.
 - `tolerance`: This variable sets the  tolerance minimum centroid movement required to continue iterations; used to determine convergence.
-- `algorithm_id`: Selects which implementation to run for the K-Means algorithm:
-    - `1`: Serial
-    - `2`: Shared Memory CPU
-    - `3`: Distributed Memory CPU
-    - `4`: Shared Memory GPU
-    - `5`: Distributed Memory GPU
+- `algorithm_id`: Selects which implementation to run for the K-Means algorithm.
+
+    | ID | Implementation         |
+    |----|------------------------|
+    | 1  | Serial                 |
+    | 2  | Shared Memory CPU      |
+    | 3  | Distributed Memory CPU |
+    | 4  | Shared Memory GPU      |
+    | 5  | Distributed Memory GPU |
 
 ***Note***: Your first time running the program, you will notice that reading the `data/tracks_features.csv` file takes a few minutes. After the program has ran once, it will save the track features as a binary file, and reading will be much faster.
 
