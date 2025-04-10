@@ -113,12 +113,19 @@ int main(int argc, char *argv[]) {
 
     }
 
-    size_t dimension = points.empty() ? 0 : points[0].features.size();
+    size_t dimension = 0;
 
-    if (dimension == 0 && rank == 0) {
-        std::cerr << "Error: No data available to determine the vector dimension." << std::endl;
-        return 1;
+    if (rank == 0) {
+        if (points.empty()) {
+            std::cerr << "Error: No data available to determine the vector dimension." << std::endl;
+            MPI_Finalize();
+            return 1;
+        }
+        dimension = points[0].features.size();
     }
+
+    // Broadcast the dimension to all ranks
+    MPI_Bcast(&dimension, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 
     // Create the algorithm and run it with the specified parameters
     try {
