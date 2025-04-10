@@ -110,10 +110,10 @@ namespace SpotifyGenreRevealParty {
         return points;
     }
 
-    std::vector<Point> getOrLoadPoints(const std::string& csvFile, const std::string& binaryCache) {
+    std::vector<Point> getOrLoadPoints(const std::string& csvFile, const std::string& binaryCache, int rank) {
         std::vector<Point> points;
 
-        if (std::ifstream binCheck(binaryCache); binCheck) {
+        if (std::ifstream binCheck(binaryCache); binCheck && rank == 0) {
             std::cout << "Reading points from binary cache..." << std::endl;
             try {
                 points = readPointsFromBinary(binaryCache);
@@ -123,9 +123,11 @@ namespace SpotifyGenreRevealParty {
             }
         }
 
-        std::cout << "Reading frames from CSV: " << csvFile << std::endl;
-        if (const std::ifstream fileCheck(csvFile); !fileCheck) {
-            throw std::runtime_error("CSV file not found or cannot be opened: " + csvFile);
+        if (rank == 0) {
+            std::cout << "Reading frames from CSV... " << csvFile << std::endl;
+            if (const std::ifstream fileCheck(csvFile); !fileCheck) {
+                throw std::runtime_error("CSV file not found or cannot be opened: " + csvFile);
+            }
         }
 
         const auto frames = SpotifyFrameReader::readCSV(csvFile);
@@ -141,9 +143,13 @@ namespace SpotifyGenreRevealParty {
 
         try {
             writePointsToBinary(binaryCache, points);
-            std::cout << "Cached scaled points to binary file." << std::endl;
+            if (rank == 0) {
+                std::cout << "Cached scaled points to binary file." << std::endl;
+            }
         } catch (const std::exception& e) {
-            std::cerr << "Failed to write binary cache: " << e.what() << std::endl;
+            if (rank == 0) {
+                std::cerr << "Failed to write binary cache: " << e.what() << std::endl;
+            }
         }
 
         return points;

@@ -16,6 +16,6 @@ namespace SpotifyGenreRevealParty {
     std::vector<Point> prepareDataForKMeans(const std::vector<SpotifyFrame>& frames);
     void writePointsToBinary(const std::string& filename, const std::vector<Point>& points);
     std::vector<Point> readPointsFromBinary(const std::string& filename);
-    std::vector<Point> getOrLoadPoints(const std::string& csvFile, const std::string& binaryCache);
+    std::vector<Point> getOrLoadPoints(const std::string& csvFile, const std::string& binaryCache, int rank);
 
 }  // namespace SpotifyGenreRevealParty
