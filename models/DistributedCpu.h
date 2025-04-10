@@ -236,7 +236,6 @@ private:
             }
 
             utils::writePointsAndCentroidsToFile(allPoints, centroids, "../output/distributed_cpu_results.csv");
-            std::cout << "Final centroids written to output." << std::endl;
         }
     }
 
