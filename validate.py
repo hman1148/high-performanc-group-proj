@@ -12,9 +12,13 @@ def read_csv_results(file_path):
     points = df[df["is_centroid"] == False].copy()
     centroids = df[df["is_centroid"] == True].copy()
 
-    # Drop index and is_centroid from points for clean comparison
-    points_sorted = points.drop(columns=["index", "is_centroid"]).sort_values(by=points.columns.tolist()).reset_index(drop=True)
-    centroids_sorted = centroids.drop(columns=["index", "is_centroid", "cluster_id"]).sort_values(by=centroids.columns.tolist()).reset_index(drop=True)
+    # Clean + sort points
+    points = points.drop(columns=["index", "is_centroid"])
+    points_sorted = points.sort_values(by=points.columns.tolist()).reset_index(drop=True)
+
+    # Clean + sort centroids
+    centroids = centroids.drop(columns=["index", "is_centroid", "cluster_id"])
+    centroids_sorted = centroids.sort_values(by=centroids.columns.tolist()).reset_index(drop=True)
 
     return points_sorted, centroids_sorted
 
