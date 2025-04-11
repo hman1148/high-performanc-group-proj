@@ -185,19 +185,11 @@ void SpotifyGenreRevealParty::GlobalGPU::freeGPUMemory()
 
 bool SpotifyGenreRevealParty::GlobalGPU::isMpiCudaAware()
 {
-#ifdef MPIX_CUDA_AWARE_SUPPORT
-    if (MPIX_CUDA_AWARE_SUPPORT)
-    {
-        return true;
-    }
-#endif
-
+    // This test can hang if MPI isn't CUDA-aware but you try to use device pointers
     int *d_testValue;
     CHECK_CUDA_ERROR(cudaMalloc(&d_testValue, sizeof(int)));
-
     int result = MPI_Send(d_testValue, 1, MPI_INT, 0, 0, MPI_COMM_SELF);
     CHECK_CUDA_ERROR(cudaFree(d_testValue));
-
     return (result == MPI_SUCCESS);
 }
 
@@ -523,31 +515,44 @@ void SpotifyGenreRevealParty::GlobalGPU::saveResultsToCSV(const std::string &fil
 
 void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty::Point> &data, int k, std::size_t dimensions, int maxIterations, double tolerance)
 {
+    std::cout << "Rank " << this->m_rank << ": Starting GlobalGPU run " << std::endl;
     this->m_number_of_dimensions = static_cast<int>(dimensions);
     this->m_number_of_clusters = k;
     this->m_max_iterations = maxIterations;
 
+    // Step 1: Distribute data across processes
+    std::cout << "Rank " << m_rank << ": Distributing data" << std::endl;
+    this->distributeData(data);
+    std::cout << "Rank " << m_rank << ": Data distribution complete" << std::endl;
+
+    // Step 2: Allocate GPU memory
+    std::cout << "Rank " << m_rank << ": Allocating GPU memory" << std::endl;
+    this->allocateGPUMemory();
+    std::cout << "Rank " << m_rank << ": GPU memory allocated" << std::endl;
+
+    // Step 3: Initialize centroids
+    std::cout << "Rank " << m_rank << ": Initializing centroids" << std::endl;
+    this->initializeCentroids(k, this->m_number_of_dimensions);
+    std::cout << "Rank " << m_rank << ": Centroids initialized" << std::endl;
+
     if (this->m_rank == 0)
     {
-        std::cout << "Running KMeans with " << this->m_number_of_clusters << " clusters and " << this->m_max_iterations << " max iterations." << std::endl;
+        std::cout << "Running KMeans with " << this->m_number_of_clusters
+                  << " clusters and " << this->m_max_iterations
+                  << " max iterations." << std::endl;
     }
 
-    // Step1 : distribute data across processes
-    this->distributeData(data);
-
-    // Step 2. Allocate GPU memory
-    this->allocateGPUMemory();
-
-    // Step 3. Initialize centroids
-    this->initializeCentroids(k, this->m_number_of_dimensions);
-
-    // Step 4 . Run distributed KMeans
+    // Step 4: Run distributed KMeans
+    std::cout << "Rank " << m_rank << ": Starting KMeans iterations" << std::endl;
     this->runDistributedKMeans(tolerance);
+    std::cout << "Rank " << m_rank << ": KMeans iterations complete" << std::endl;
 
-    // Step 5. Gather results
+    // Step 5: Gather results
+    std::cout << "Rank " << m_rank << ": Gathering results" << std::endl;
     this->gatherResults(data);
+    std::cout << "Rank " << m_rank << ": Results gathered" << std::endl;
 
-    // Step6. Save results to CSV on rank 0
+    // Step 6: Save results to CSV on rank 0
     if (this->m_rank == 0)
     {
         std::cout << "Saving results to CSV..." << std::endl;
@@ -581,4 +586,5 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
 
     // Free GPU memory
     this->freeGPUMemory();
+    std::cout << "Rank " << m_rank << ": GlobalGPU run complete" << std::endl;
 }
