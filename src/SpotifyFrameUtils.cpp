@@ -123,9 +123,10 @@ namespace SpotifyGenreRevealParty {
             }
         }
 
-        std::cout << "Reading frames from CSV: " << csvFile << std::endl;
-        if (const std::ifstream fileCheck(csvFile); !fileCheck) {
-            throw std::runtime_error("CSV file not found or cannot be opened: " + csvFile);
+            std::cout << "Reading frames from CSV... " << csvFile << std::endl;
+            if (const std::ifstream fileCheck(csvFile); !fileCheck) {
+                throw std::runtime_error("CSV file not found or cannot be opened: " + csvFile);
+
         }
 
         const auto frames = SpotifyFrameReader::readCSV(csvFile);
@@ -137,13 +138,13 @@ namespace SpotifyGenreRevealParty {
             }
         }
 
-        minMaxScale(points);
-
         try {
             writePointsToBinary(binaryCache, points);
-            std::cout << "Cached scaled points to binary file." << std::endl;
+                std::cout << "Cached scaled points to binary file." << std::endl;
+
         } catch (const std::exception& e) {
-            std::cerr << "Failed to write binary cache: " << e.what() << std::endl;
+                std::cerr << "Failed to write binary cache: " << e.what() << std::endl;
+
         }
 
         return points;

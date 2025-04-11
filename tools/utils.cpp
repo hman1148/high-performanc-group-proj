@@ -20,39 +20,43 @@ namespace utils {
 
         double sum = 0.0;
         for (size_t i = 0; i < a.size(); ++i) {
-            double diff = a[i] - b[i];
+            const double diff = a[i] - b[i];
             sum += diff * diff;
         }
         return std::sqrt(sum);
     }
 
-    void writePointsAndCentroidsToFile(const std::vector<SpotifyGenreRevealParty::Point>& points, const std::vector<SpotifyGenreRevealParty::Point>& centroids, const std::string& filename) {
-        std::ofstream file(filename, std::ios::trunc); // Open in truncate mode to overwrite if exists
+    void writePointsAndCentroidsToFile(const std::vector<Point>& points, const std::vector<Point>& centroids, const std::string& filename) {
+        std::ofstream file(filename, std::ios::trunc);
         if (!file) {
             std::cerr << "Error opening file: " << filename << std::endl;
             return;
         }
 
-        // Write points
-        file << "# Points" << std::endl;
+        // Write header based on feature order from extractFeatures
+        file << "index,danceability,energy,tempo,loudness,speechiness,acousticness,instrumentalness,liveness,valence,cluster_id,is_centroid\n";
+
+        size_t index = 0;
+
+        // Write data points
         for (const auto& point : points) {
+            file << index++;
             for (const auto& feature : point.features) {
-                file << feature << " ";
+                file << "," << feature;
             }
-            file << "| Cluster: " << point.clusterId << std::endl;
+            file << "," << point.clusterId << ",false\n";
         }
 
         // Write centroids
-        file << "\n# Centroids" << std::endl;
         for (const auto& centroid : centroids) {
+            file << index++;
             for (const auto& feature : centroid.features) {
-                file << feature << " ";
+                file << "," << feature;
             }
-            file << "| Centroid" << std::endl;
+            file << "," << centroid.clusterId << ",true\n";
         }
 
         file.close();
-        std::cout << "Output file written to:  " << filename << std::endl;
+        std::cout << "Output CSV written to: " << filename << std::endl;
     }
-
 }

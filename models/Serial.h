@@ -68,7 +68,7 @@ private:
             std::cout << "Time taken for computation: " << duration.count() << " seconds." << std::endl;
         }
 
-        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.txt");
+        utils::writePointsAndCentroidsToFile(points, centroids, "../output/serial_results.csv");
     }
 
     // Function to assign points to the closest centroid

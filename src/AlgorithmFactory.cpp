@@ -21,9 +21,9 @@ std::unique_ptr<IAlgorithm> createAlgorithm(int choice, const int &k, const int 
     case 2:
         return std::make_unique<SharedCpu>();
     case 3:
-        return std::make_unique<SpotifyGenreRevealParty::SharedGPU>(k, max_iterations);
-    case 4:
         return std::make_unique<DistributedCpu>();
+    case 4:
+        return std::make_unique<SpotifyGenreRevealParty::SharedGPU>(k, max_iterations);
     case 5:
         return std::make_unique<SpotifyGenreRevealParty::GlobalGPU>(k, max_iterations);
     default:
