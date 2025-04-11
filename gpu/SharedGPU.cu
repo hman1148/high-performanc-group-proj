@@ -4,6 +4,7 @@
 
 #include <cuda_runtime.h>
 
+#include "../tools/utils.h"
 #include "SharedGPU.cuh"
 
 // Define error checking macro
@@ -178,9 +179,28 @@ namespace SpotifyGenreRevealParty
                 std::cerr << "Warning: Could not create output directory" << std::endl;
             }
 
+            std::vector<SpotifyGenreRevealParty::Point> centroids(this->m_number_of_clusters);
+            for (int i = 0; i < this->m_number_of_clusters; ++i)
+            {
+                std::vector<float> features(this->m_number_of_dimensions);
+
+                centroids[i].clusterId = i;
+                centroids[i].features.resize(this->m_number_of_dimensions);
+
+                for (int j = 0; j < this->m_number_of_dimensions; ++j)
+                {
+                    centroids[i].features[j] = this->m_host_centroids[i][j];
+                }
+
+                auto point = std::make_shared<SpotifyGenreRevealParty::Point>(features);
+                point->clusterId = i;
+
+                centroids.push_back(*point);
+            }
+
             // Save clustering results
             std::string outputFile = "output/shared_gpu_clusters.csv";
-            saveResultsToCSV(outputFile, songIds);
+            utils::writePointsAndCentroidsToFile(data, centroids, outputFile);
             std::cout << "Results saved to " << outputFile << std::endl;
         }
         catch (const std::exception &e)

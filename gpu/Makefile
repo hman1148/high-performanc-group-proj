@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = "/mnt/c/Users/Hunter Peart/CS5030/class-project"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/mnt/c/Users/Hunter Peart/CS5030/class-project/build"
+CMAKE_BINARY_DIR = "/mnt/c/Users/Hunter Peart/CS5030/class-project"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Hunter Peart/CS5030/class-project/build/CMakeFiles" "/mnt/c/Users/Hunter Peart/CS5030/class-project/build/gpu//CMakeFiles/progress.marks"
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Hunter Peart/CS5030/class-project/build/CMakeFiles" 0
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Hunter Peart/CS5030/class-project/CMakeFiles" "/mnt/c/Users/Hunter Peart/CS5030/class-project/gpu//CMakeFiles/progress.marks"
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Hunter Peart/CS5030/class-project/CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/clean
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/preinstall
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/preinstall
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 gpu/CMakeFiles/gpu.dir/rule:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/CMakeFiles/gpu.dir/rule
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gpu/CMakeFiles/gpu.dir/rule
 .PHONY : gpu/CMakeFiles/gpu.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ gpu: gpu/CMakeFiles/gpu.dir/rule
 
 # fast build rule for target.
 gpu/fast:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/build
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/build
 .PHONY : gpu/fast
 
 GlobalGPU.o: GlobalGPU.cu.o
@@ -135,7 +135,7 @@ GlobalGPU.o: GlobalGPU.cu.o
 
 # target to build an object file
 GlobalGPU.cu.o:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.o
 .PHONY : GlobalGPU.cu.o
 
 GlobalGPU.i: GlobalGPU.cu.i
@@ -143,7 +143,7 @@ GlobalGPU.i: GlobalGPU.cu.i
 
 # target to preprocess a source file
 GlobalGPU.cu.i:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.i
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.i
 .PHONY : GlobalGPU.cu.i
 
 GlobalGPU.s: GlobalGPU.cu.s
@@ -151,7 +151,7 @@ GlobalGPU.s: GlobalGPU.cu.s
 
 # target to generate assembly for a file
 GlobalGPU.cu.s:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.s
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/GlobalGPU.cu.s
 .PHONY : GlobalGPU.cu.s
 
 SharedGPU.o: SharedGPU.cu.o
@@ -159,7 +159,7 @@ SharedGPU.o: SharedGPU.cu.o
 
 # target to build an object file
 SharedGPU.cu.o:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/SharedGPU.cu.o
 .PHONY : SharedGPU.cu.o
 
 SharedGPU.i: SharedGPU.cu.i
@@ -167,7 +167,7 @@ SharedGPU.i: SharedGPU.cu.i
 
 # target to preprocess a source file
 SharedGPU.cu.i:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/SharedGPU.cu.i
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/SharedGPU.cu.i
 .PHONY : SharedGPU.cu.i
 
 SharedGPU.s: SharedGPU.cu.s
@@ -175,7 +175,7 @@ SharedGPU.s: SharedGPU.cu.s
 
 # target to generate assembly for a file
 SharedGPU.cu.s:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/SharedGPU.cu.s
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(MAKE) $(MAKESILENT) -f gpu/CMakeFiles/gpu.dir/build.make gpu/CMakeFiles/gpu.dir/SharedGPU.cu.s
 .PHONY : SharedGPU.cu.s
 
 # Help Target
@@ -204,6 +204,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd "/mnt/c/Users/Hunter Peart/CS5030/class-project" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -7,6 +7,7 @@
 #include <cstring>
 #include <mpi.h>
 
+#include "../tools/utils.h"
 #include "GlobalGPU.cuh"
 
 // Cuda Error checking macro
@@ -365,15 +366,22 @@ void SpotifyGenreRevealParty::GlobalGPU::runDistributedKMeans(double tolerance)
         }
         else
         {
-            // Traditional MPI Approach - copy thorugh host
-            CHECK_CUDA_ERROR(cudaMemcpy(this->m_host_centroids.data(), this->m_device_temp_centroids, this->m_number_of_clusters * this->m_number_of_dimensions * sizeof(float), cudaMemcpyDeviceToHost));
+            // Traditional MPI Approach - copy through host
+            CHECK_CUDA_ERROR(cudaMemcpy(local_centroids_sums.data(), this->m_device_temp_centroids,
+                                        this->m_number_of_clusters * this->m_number_of_dimensions * sizeof(float),
+                                        cudaMemcpyDeviceToHost));
 
-            CHECK_CUDA_ERROR(cudaMemcpy(this->m_host_cluster_assignments.data(), this->m_device_cluster_count, this->m_number_of_clusters * sizeof(int), cudaMemcpyDeviceToHost));
+            CHECK_CUDA_ERROR(cudaMemcpy(local_centroid_counts.data(), this->m_device_cluster_count,
+                                        this->m_number_of_clusters * sizeof(int),
+                                        cudaMemcpyDeviceToHost));
 
             // Reduce across processes
-            MPI_Allreduce(this->m_host_centroids.data(), global_centroids_sums.data(), this->m_number_of_clusters * this->m_number_of_dimensions, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(local_centroids_sums.data(), global_centroids_sums.data(),
+                          this->m_number_of_clusters * this->m_number_of_dimensions,
+                          MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
 
-            MPI_Allreduce(this->m_host_cluster_assignments.data(), global_centroid_counts.data(), this->m_number_of_clusters, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(local_centroid_counts.data(), global_centroid_counts.data(),
+                          this->m_number_of_clusters, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
             // Normalize centroids on CPU
             for (int i = 0; i < this->m_number_of_clusters; ++i)
@@ -382,17 +390,19 @@ void SpotifyGenreRevealParty::GlobalGPU::runDistributedKMeans(double tolerance)
                 {
                     for (int j = 0; j < this->m_number_of_dimensions; ++j)
                     {
-                        global_centroids_sums[i * this->m_number_of_dimensions + j] /= global_centroid_counts[i];
+                        this->m_host_centroids[i * this->m_number_of_dimensions + j] =
+                            global_centroids_sums[i * this->m_number_of_dimensions + j] / global_centroid_counts[i];
                     }
                 }
             }
 
-            // Copy update centoroids back onto GPU
-            CHECK_CUDA_ERROR(cudaMemcpy(this->m_device_centroids, global_centroids_sums.data(), this->m_number_of_clusters * this->m_number_of_dimensions * sizeof(float), cudaMemcpyHostToDevice));
+            // Copy updated centroids back to GPU
+            CHECK_CUDA_ERROR(cudaMemcpy(this->m_device_centroids, this->m_host_centroids.data(),
+                                        this->m_number_of_clusters * this->m_number_of_dimensions * sizeof(float),
+                                        cudaMemcpyHostToDevice));
         }
 
         // Step 4. check for convergence
-
         bool local_converged = true;
 
         // copy centroids back to host if using CUDA aware MPI
@@ -575,8 +585,20 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
             }
 
             // Save clustering results
-            std::string outputFile = "output/global_gpu_results.csv";
-            this->saveResultsToCSV(outputFile, songIds);
+            std::vector<SpotifyGenreRevealParty::Point> centroids(this->m_number_of_clusters);
+            for (int i = 0; i < this->m_number_of_clusters; ++i)
+            {
+                centroids[i].clusterId = i;
+                centroids[i].features.resize(this->m_number_of_dimensions);
+
+                for (int j = 0; j < this->m_number_of_dimensions; ++j)
+                {
+                    centroids[i].features[j] = this->m_host_centroids[i * this->m_number_of_dimensions + j];
+                }
+            }
+
+            std::string detailedFile = "output/global_gpu_results.csv";
+            utils::writePointsAndCentroidsToFile(data, centroids, detailedFile);
         }
         catch (const std::exception &ex)
         {
