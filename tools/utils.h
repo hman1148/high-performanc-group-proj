@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "../models/Point.h"
+#include <string>
 
 namespace utils
 {

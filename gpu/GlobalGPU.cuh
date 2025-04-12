@@ -33,7 +33,7 @@ namespace SpotifyGenreRevealParty
 
         // MPI Params
         int m_rank;
-        int m_num_processs;
+        int m_num_processes;
         int m_num_points_per_process;
         bool m_cuda_aware_mpi;
 
@@ -56,7 +56,7 @@ namespace SpotifyGenreRevealParty
         void initializeCentroids(int k, int dimensions);
         void runDistributedKMeans(double tolerance);
         void gatherResults(std::vector<SpotifyGenreRevealParty::Point> &data);
-
+        void calculateDataDistribution(const size_t &total_points);
         // Memory management
         void allocateGPUMemory();
         void freeGPUMemory();

@@ -89,7 +89,7 @@ SpotifyGenreRevealParty::GlobalGPU::GlobalGPU(int clusters, int maxIterations)
     : m_number_of_clusters(clusters),
       m_max_iterations(maxIterations),
       m_rank(0),
-      m_num_processs(0),
+      m_num_processes(0),
       m_num_points_per_process(0),
       m_cuda_aware_mpi(false),
       m_device_data(nullptr),
@@ -130,7 +130,7 @@ void SpotifyGenreRevealParty::GlobalGPU::initializeMPI()
 
     // Get rank and size
     MPI_Comm_rank(MPI_COMM_WORLD, &this->m_rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &this->m_num_processs);
+    MPI_Comm_size(MPI_COMM_WORLD, &this->m_num_processes);
 
     // select gpu based on local rank
     char *local_rank_str = getenv("OMPI_COMM_WORLD_LOCAL_RANK");
@@ -186,12 +186,34 @@ void SpotifyGenreRevealParty::GlobalGPU::freeGPUMemory()
 
 bool SpotifyGenreRevealParty::GlobalGPU::isMpiCudaAware()
 {
-    // This test can hang if MPI isn't CUDA-aware but you try to use device pointers
-    int *d_testValue;
-    CHECK_CUDA_ERROR(cudaMalloc(&d_testValue, sizeof(int)));
-    int result = MPI_Send(d_testValue, 1, MPI_INT, 0, 0, MPI_COMM_SELF);
-    CHECK_CUDA_ERROR(cudaFree(d_testValue));
-    return (result == MPI_SUCCESS);
+#ifdef MPIX_CUDA_AWARE_SUPPORT
+    if (MPIX_CUDA_AWARE_SUPPORT)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+#elif defined(MVAPICH2_NUMVERSION) && (MVAPICH2_NUMVERSION >= 20000000)
+    // MVAPICH2 2.0+ supports CUDA
+    return true;
+#elif defined(OPEN_MPI) && (OPEN_MPI >= 1005004)
+    // OpenMPI 1.5.4+ might support CUDA
+    char *env_var = getenv("OMPI_MCA_mpi_cuda_support");
+    if (env_var && strcmp(env_var, "1") == 0)
+    {
+        return true;
+    }
+    return false;
+#else
+    // Default to false to be safe
+    if (m_rank == 0)
+    {
+        std::cout << "CUDA-aware MPI detection not available, defaulting to CPU buffers" << std::endl;
+    }
+    return false;
+#endif
 }
 
 void SpotifyGenreRevealParty::GlobalGPU::allocateGPUMemory()
@@ -229,17 +251,17 @@ void SpotifyGenreRevealParty::GlobalGPU::distributeData(const std::vector<Spotif
     int total_points = static_cast<int>(data.size());
 
     // Calculate number of points per process
-    this->m_num_points_per_process = total_points / this->m_num_processs;
-    int remainder = total_points % this->m_num_processs;
+    this->m_num_points_per_process = total_points / this->m_num_processes;
+    int remainder = total_points % this->m_num_processes;
 
     // Last process gets any remainder poitns
-    if (this->m_rank == this->m_num_processs - 1)
+    if (this->m_rank == this->m_num_processes - 1)
     {
         this->m_num_points_per_process += remainder;
     }
 
     // Calculate start index for this process' data
-    int start_idx = this->m_rank * (total_points / this->m_num_processs);
+    int start_idx = this->m_rank * (total_points / this->m_num_processes);
 
     this->m_host_flat_data.resize(this->m_num_points_per_process * this->m_number_of_dimensions);
 
@@ -255,10 +277,10 @@ void SpotifyGenreRevealParty::GlobalGPU::distributeData(const std::vector<Spotif
         }
 
         // Send data to other processes
-        for (int proc = 1; proc < this->m_num_processs; ++proc)
+        for (int proc = 1; proc < this->m_num_processes; ++proc)
         {
-            int proc_start_idx = proc * (total_points / this->m_num_processs);
-            int proc_num_points = (proc == this->m_num_processs - 1) ? (total_points / this->m_num_processs) + remainder : (total_points / this->m_num_processs);
+            int proc_start_idx = proc * (total_points / this->m_num_processes);
+            int proc_num_points = (proc == this->m_num_processes - 1) ? (total_points / this->m_num_processes) + remainder : (total_points / this->m_num_processes);
 
             // Last process gets any remainder points
             std::vector<float> proc_data(proc_num_points * this->m_number_of_dimensions);
@@ -451,8 +473,8 @@ void SpotifyGenreRevealParty::GlobalGPU::gatherResults(std::vector<SpotifyGenreR
     int total_points = static_cast<int>(data.size());
 
     // First gather the counts from each process
-    std::vector<int> recv_counts(this->m_num_processs);
-    std::vector<int> displacements(this->m_num_processs);
+    std::vector<int> recv_counts(this->m_num_processes);
+    std::vector<int> displacements(this->m_num_processes);
 
     MPI_Gather(&this->m_num_points_per_process, 1, MPI_INT, recv_counts.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -462,7 +484,7 @@ void SpotifyGenreRevealParty::GlobalGPU::gatherResults(std::vector<SpotifyGenreR
         this->m_global_cluster_assignments.resize(total_points);
         int displacement = 0;
 
-        for (int i = 0; i < this->m_num_processs; ++i)
+        for (int i = 0; i < this->m_num_processes; ++i)
         {
             displacements[i] = displacement;
             displacement += recv_counts[i];
@@ -530,15 +552,20 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
     this->m_number_of_clusters = k;
     this->m_max_iterations = maxIterations;
 
-    // Step 1: Distribute data across processes
-    std::cout << "Rank " << m_rank << ": Distributing data" << std::endl;
-    this->distributeData(data);
-    std::cout << "Rank " << m_rank << ": Data distribution complete" << std::endl;
+    // Step 1. Calculate data distribution
+    std::cout << "Rank " << m_rank << ": Calculating data distribution" << std::endl;
+    this->calculateDataDistribution(data.size());
+    std::cout << "Rank " << m_rank << ": Data distribution calculated" << std::endl;
 
-    // Step 2: Allocate GPU memory
+    // Step 2: NOW allocate GPU memory
     std::cout << "Rank " << m_rank << ": Allocating GPU memory" << std::endl;
     this->allocateGPUMemory();
     std::cout << "Rank " << m_rank << ": GPU memory allocated" << std::endl;
+
+    // Step 3: Distribute the actual data
+    std::cout << "Rank " << m_rank << ": Distributing data" << std::endl;
+    this->distributeData(data);
+    std::cout << "Rank " << m_rank << ": Data distribution complete" << std::endl;
 
     // Step 3: Initialize centroids
     std::cout << "Rank " << m_rank << ": Initializing centroids" << std::endl;
@@ -609,4 +636,22 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
     // Free GPU memory
     this->freeGPUMemory();
     std::cout << "Rank " << m_rank << ": GlobalGPU run complete" << std::endl;
+}
+
+void SpotifyGenreRevealParty::GlobalGPU::calculateDataDistribution(const size_t &total_points)
+{
+    this->m_num_points_per_process = total_points / this->m_num_processes;
+    int remainder = total_points % this->m_num_points_per_process;
+
+    // Last process gets any remainder points
+    if (this->m_rank == this->m_num_processes - 1)
+    {
+        this->m_num_points_per_process += remainder;
+    }
+
+    if (this->m_rank == 0)
+    {
+        std::cout << "Data distribution: " << total_points << " total points, ";
+        std::cout << "each process gets ~" << this->m_num_points_per_process << " points" << std::endl;
+    }
 }

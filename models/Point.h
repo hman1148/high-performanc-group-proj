@@ -17,6 +17,8 @@ namespace SpotifyGenreRevealParty
         int clusterId;
         double minDist; // default infinite dist to nearest cluster
 
+        Point() : clusterId(-1), minDist(__DBL_MAX__) {}
+
         // Constructor to initialize dimensions and set default clusterId (-1 means no cluster)
         explicit Point(std::vector<float> features) : features(std::move(features)), clusterId(-1), minDist(__DBL_MAX__) {}
 
