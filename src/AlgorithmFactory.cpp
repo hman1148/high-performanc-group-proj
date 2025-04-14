@@ -9,8 +9,6 @@
 #include "../gpu/SharedGPU.cuh"
 #include "../gpu/GlobalGPU.cuh"
 
-#include <stdexcept>
-
 std::unique_ptr<IAlgorithm> createAlgorithm(int choice, const int &k, const int &max_iterations)
 {
     switch (choice)

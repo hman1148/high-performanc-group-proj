@@ -29,3 +29,36 @@ For this week study, we used `k = 8`, `tolerance=1e-4`, and `max_iterations=100`
 | 2             | 25% / ~300,000    | 15.409     | 7.532      | 7.624   |
 | 4             | 50% / ~600,000    | 30.845     | 7.156      | 7.746   |
 | 8             | 100% / ~1,200,000 | 53.223     | 6.724      | 7.405   |
+
+### GPU Implementation Analysis
+
+We tested both GPU implementations with the same dataset. Similar to CPU implementations the params were `k = 8`, `tolerance=1e-4`, and `max_terations=100`
+
+#### SharedGPU Performance with Different Thread Block Sizes
+
+| Thread Block Size | Execution Time (s) | Relative Performance |
+| ----------------- | ------------------ | -------------------- |
+| 128               | 1.310              | 0.76                 |
+| 256               | 0.993              | 1.00                 |
+| 1024              | 1.315              | 0.76                 |
+
+#### GlobalGPU Performance with Different Thread Block Sizes
+
+| Thread Block Size | Execution Time (s) | Relative Performance |
+| ----------------- | ------------------ | -------------------- |
+| 128               | 1.113              | 0.71                 |
+| 256               | 0.787              | 1.00                 |
+| 1024              | 1.123              | 0.70                 |
+
+### Implementation Characteristics
+
+Both GPU implementations converged successfully but with different iteration counts:
+
+| Implementation | Thread Block Size | Iterations to Converge | Memory Usage |
+| -------------- | ----------------- | ---------------------- | ------------ |
+| SharedGPU      | 256               | ~50                    | -            |
+| GlobalGPU      | 128               | 26                     | 7MB          |
+| GlobalGPU      | 256               | 50                     | 7MB          |
+| GlobalGPU      | 1024              | 46                     | 7MB          |
+
+_Note: The relative performance is calculated as the ratio of the 256 thread block time to the current configuration time. Higher values indicate better performance._
