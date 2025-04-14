@@ -117,8 +117,6 @@ void SpotifyGenreRevealParty::GlobalGPU::initializeMPI()
                       << "This may cause issues with proper MPI cleanup." << std::endl;
         }
 
-        // Don't try to initialize MPI here - it should be done in main
-        // instead, throw an error
         throw std::runtime_error("MPI should be initialized in main before creating algorithms");
     }
 

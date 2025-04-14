@@ -4,7 +4,6 @@
 #include "../models/AlgorithmFactory.h"
 #include "../models/Serial.h"
 #include "../models/DistributedCpu.h"
-#include "../models/DistributedGpu.h"
 #include "../models/SharedCpu.h"
 
 #include "../gpu/SharedGPU.cuh"
