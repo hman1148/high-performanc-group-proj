@@ -1,16 +1,15 @@
-// Architecture
-// [Node 1] --- [GPU 1]        [Node 2] --- [GPU 2]
-//     |                           |
-//     |                           |
-//     +---- MPI Network  ---------+
-//               |
-// [Node 3] --- [GPU 3]        [Node 4] --- [GPU 4]
-
 #pragma once
 
 #include <vector>
 #include <memory>
 #include <string>
+#include <chrono>
+#include <algorithm>
+#include <random>
+#include <fstream>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
 
 #include "../models/IAlgorithm.h"
 
@@ -23,7 +22,6 @@ namespace SpotifyGenreRevealParty
         ~GlobalGPU();
 
         void run(std::vector<SpotifyGenreRevealParty::Point> &data, int k, std::size_t dimensions, int maxIterations, double tolerance) override;
-        void saveResultsToCSV(const std::string &filename, const std::vector<std::string> &songIds);
 
     private:
         // Basic params

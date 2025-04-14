@@ -108,6 +108,8 @@ namespace SpotifyGenreRevealParty
                         double tolerance)
     {
         // Set the number of clusters and iterations
+        auto start_time = std::chrono::high_resolution_clock::now();
+
         m_number_of_clusters = k;
         m_max_iterations = maxIterations;
 
@@ -199,7 +201,7 @@ namespace SpotifyGenreRevealParty
             }
 
             // Save clustering results
-            std::string outputFile = "output/shared_gpu_clusters.csv";
+            std::string outputFile = "output/shared_gpu_results.csv";
             utils::writePointsAndCentroidsToFile(data, centroids, outputFile);
             std::cout << "Results saved to " << outputFile << std::endl;
         }
@@ -207,6 +209,11 @@ namespace SpotifyGenreRevealParty
         {
             std::cerr << "Error saving results: " << e.what() << std::endl;
         }
+
+        auto end_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_time = end_time - start_time;
+
+        std::cout << "TIMING: SharedGPU Finished in " << elapsed_time.count() << " seconds" << std::endl;
 
         this->freeMemory();
     }
@@ -363,28 +370,6 @@ namespace SpotifyGenreRevealParty
     std::vector<std::vector<float>> &SharedGPU::getClusterCentroids()
     {
         return m_host_centroids;
-    }
-
-    // Save results to the csv
-    void SharedGPU::saveResultsToCSV(const std::string &filename, const std::vector<std::string> &songIds)
-    {
-        // Open file
-        std::ofstream file(filename);
-        if (!file.is_open())
-        {
-            throw std::runtime_error("Failed to open file: " + filename);
-        }
-
-        // Write header
-        file << "songId,cluster" << std::endl;
-
-        // Write data
-        for (std::size_t index = 0; index < songIds.size() && index < m_host_cluster_assignments.size(); ++index)
-        {
-            file << songIds[index] << "," << m_host_cluster_assignments[index] << std::endl;
-        }
-
-        file.close();
     }
 
     // Allocate memory on GPU

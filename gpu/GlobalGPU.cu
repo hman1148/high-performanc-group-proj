@@ -1,10 +1,4 @@
 #include <cuda_runtime.h>
-#include <algorithm>
-#include <random>
-#include <fstream>
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
 #include <mpi.h>
 
 #include "../tools/utils.h"
@@ -364,7 +358,6 @@ void SpotifyGenreRevealParty::GlobalGPU::runDistributedKMeans(double tolerance)
         CHECK_CUDA_ERROR(cudaMemset(this->m_device_cluster_count, 0, this->m_number_of_clusters * sizeof(int)));
 
         // Step 1: assign points to nearest centroid
-        // Launch kernel to assign points to nearest centroid
         assignPointsToGlobalCentroids<<<blocksForPoints, threadsPerBlock>>>(this->m_device_data, this->m_device_centroids, this->m_device_cluster_assignments, this->m_num_points_per_process, this->m_number_of_dimensions, this->m_number_of_clusters);
         CHECK_CUDA_ERROR(cudaGetLastError());
 
@@ -521,56 +514,26 @@ void SpotifyGenreRevealParty::GlobalGPU::gatherResults(std::vector<SpotifyGenreR
     }
 }
 
-void SpotifyGenreRevealParty::GlobalGPU::saveResultsToCSV(const std::string &filename, const std::vector<std::string> &songIds)
-{
-    // Only rank 0 writes the CSV file
-    if (this->m_rank == 0)
-    {
-        std::ofstream file(filename);
-        if (!file.is_open())
-        {
-            throw std::runtime_error("Failed to open file: " + filename);
-        }
-
-        // Write header
-        file << "songId,cluster" << std::endl;
-
-        // write data
-        for (size_t i = 0; i < this->m_global_cluster_assignments.size(); ++i)
-        {
-            file << songIds[i] << "," << this->m_global_cluster_assignments[i] << std::endl;
-        }
-        file.close();
-        std::cout << "Results saved to " << filename << std::endl;
-    }
-}
-
 void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty::Point> &data, int k, std::size_t dimensions, int maxIterations, double tolerance)
 {
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     std::cout << "Rank " << this->m_rank << ": Starting GlobalGPU run " << std::endl;
     this->m_number_of_dimensions = static_cast<int>(dimensions);
     this->m_number_of_clusters = k;
     this->m_max_iterations = maxIterations;
 
     // Step 1. Calculate data distribution
-    std::cout << "Rank " << m_rank << ": Calculating data distribution" << std::endl;
     this->calculateDataDistribution(data.size());
-    std::cout << "Rank " << m_rank << ": Data distribution calculated" << std::endl;
 
     // Step 2: NOW allocate GPU memory
-    std::cout << "Rank " << m_rank << ": Allocating GPU memory" << std::endl;
     this->allocateGPUMemory();
-    std::cout << "Rank " << m_rank << ": GPU memory allocated" << std::endl;
 
     // Step 3: Distribute the actual data
-    std::cout << "Rank " << m_rank << ": Distributing data" << std::endl;
     this->distributeData(data);
-    std::cout << "Rank " << m_rank << ": Data distribution complete" << std::endl;
 
     // Step 3: Initialize centroids
-    std::cout << "Rank " << m_rank << ": Initializing centroids" << std::endl;
     this->initializeCentroids(k, this->m_number_of_dimensions);
-    std::cout << "Rank " << m_rank << ": Centroids initialized" << std::endl;
 
     if (this->m_rank == 0)
     {
@@ -580,14 +543,10 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
     }
 
     // Step 4: Run distributed KMeans
-    std::cout << "Rank " << m_rank << ": Starting KMeans iterations" << std::endl;
     this->runDistributedKMeans(tolerance);
-    std::cout << "Rank " << m_rank << ": KMeans iterations complete" << std::endl;
 
     // Step 5: Gather results
-    std::cout << "Rank " << m_rank << ": Gathering results" << std::endl;
     this->gatherResults(data);
-    std::cout << "Rank " << m_rank << ": Results gathered" << std::endl;
 
     // Step 6: Save results to CSV on rank 0
     if (this->m_rank == 0)
@@ -632,6 +591,11 @@ void SpotifyGenreRevealParty::GlobalGPU::run(std::vector<SpotifyGenreRevealParty
             std::cerr << "Error creating output directory: " << ex.what() << std::endl;
         }
     }
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_time = end_time - start_time;
+
+    std::cout << "TIMING: GlobalGPU completed in " << elapsed_time.count() << " seconds" << std::endl;
 
     // Free GPU memory
     this->freeGPUMemory();

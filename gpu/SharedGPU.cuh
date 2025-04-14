@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
+#include <chrono>
 
 #include "../models/IAlgorithm.h"
 
@@ -37,9 +38,6 @@ namespace SpotifyGenreRevealParty
 
         // Get centroids of clusters
         std::vector<std::vector<float>> &getClusterCentroids();
-
-        // Save resutls to CSV
-        void saveResultsToCSV(const std::string &filename, const std::vector<std::string> &songIds);
 
         void run(std::vector<SpotifyGenreRevealParty::Point> &data,
                  int k,
