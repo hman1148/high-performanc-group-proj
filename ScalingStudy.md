@@ -61,4 +61,6 @@ Both GPU implementations converged successfully but with different iteration cou
 | GlobalGPU      | 256               | 50                     | 7MB          |
 | GlobalGPU      | 1024              | 46                     | 7MB          |
 
-_Note: The relative performance is calculated as the ratio of the 256 thread block time to the current configuration time. Higher values indicate better performance._
+Findings GPU:
+
+- We found that the block size for SharedGPU and GlobalGPU was ideal at 256 thread block sizes. This is as a result of the SM max size of 1024 threads per block. As we increased the number of blocks, the overall execution time increased since each SM couldn't fit nearly as much as the idea 256. Conversely, for smaller block sizes, the likelyhood of the reduced performance is due to too many block sizes in each SM.
