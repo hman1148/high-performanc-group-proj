@@ -6,9 +6,9 @@ The serial version performs K-Means clustering on a single thread without any fo
 - Initializes `k` random centroids
 - Iteratively assigns each point to the nearest centroid
 - Computes new centroids as the mean of all points in each cluster
-- Terminates early if centroids converge based on a tolerance value
+- Exits early if centroids converge based on a tolerance value
 
-Output is written to a CSV file after the algorithm completes.
+This is the most basic implementation and is not very useful once scaled up.
 
 ## Pseudocode
 ```
@@ -34,7 +34,7 @@ This version is parallelized for multi-core CPUs using OpenMP. It accelerates th
 - Parallelizing centroid computation using local thread accumulations and `#pragma omp critical`
 - Parallel reduction for convergence checking
 
-This implementation keeps all data in shared memory and is suitable for running on a single machine with multiple cores.
+This implementation keeps all data in shared memory and is useful for running on a single machine with multiple cores.
 
 ## Pseudocode
 ```
