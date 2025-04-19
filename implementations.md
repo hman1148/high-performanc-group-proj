@@ -11,7 +11,8 @@ The serial version performs K-Means clustering on a single thread without any fo
 Output is written to a CSV file after the algorithm completes.
 
 ## Pseudocode
-<code>function run_kmeans_serial(points, k, dimensions, maxIterations, tolerance):
+```
+function run_kmeans_serial(points, k, dimensions, maxIterations, tolerance):
     centroids = generate_random_centroids(k, dimensions)
     for iter in 1 to maxIterations:
         prevCentroids = centroids
@@ -20,7 +21,8 @@ Output is written to a CSV file after the algorithm completes.
         for each cluster:
             update centroid as mean of assigned points
         if centroids are close to prevCentroids within tolerance:
-            break</code>
+            break
+```
 ---
 
 # Shared Memory CPU Implementation (`SharedCpu.h`)
@@ -35,7 +37,8 @@ This version is parallelized for multi-core CPUs using OpenMP. It accelerates th
 This implementation keeps all data in shared memory and is suitable for running on a single machine with multiple cores.
 
 ## Pseudocode
-<code>function run_kmeans_shared_cpu(points, k, dimensions, maxIterations, tolerance):
+```
+function run_kmeans_shared_cpu(points, k, dimensions, maxIterations, tolerance):
     centroids = generate_random_centroids(k, dimensions)
     for iter in 1 to maxIterations:
         prevCentroids = centroids
@@ -50,7 +53,8 @@ This implementation keeps all data in shared memory and is suitable for running 
         parallel reduction:
             check convergence
         if converged:
-            break</code>
+            break
+```
 ---
 
 # Parallel CUDA GPU Implementation (`SharedGPU.cu`)
@@ -66,7 +70,8 @@ This GPU version runs the K-Means algorithm using CUDA, without explicit use of 
 Each thread handles one point; operations are memory-bound and use global memory for all data transfers.
 
 ## Pseudocode
-<code>function run_kmeans_gpu_global(data, k, dimensions, maxIterations):
+```
+function run_kmeans_gpu_global(data, k, dimensions, maxIterations):
     allocate GPU memory for data, centroids, assignments
     initialize centroids randomly
     for iter in 1 to maxIterations:
@@ -78,7 +83,8 @@ Each thread handles one point; operations are memory-bound and use global memory
         if centroids converged:
             break
         copy newCentroids to centroids
-    copy results back to host</code>
+    copy results back to host
+```
 ---
 
 # Distributed Memory CPU Implementation (`DistributedCpu.h`)
@@ -95,7 +101,8 @@ This implementation distributes the dataset across multiple processes using MPI.
 This approach allows for scalable processing across multiple nodes or cores in a cluster.
 
 ## Pseudocode
-<code>function run_kmeans_distributed_cpu(fullData, k, dimensions, maxIterations, tolerance):
+```
+function run_kmeans_distributed_cpu(fullData, k, dimensions, maxIterations, tolerance):
     if rank == 0:
         flatten fullData and broadcast totalPoints
     scatter flatData across all ranks
@@ -112,7 +119,8 @@ This approach allows for scalable processing across multiple nodes or cores in a
             check convergence
         broadcast doneYet
         if doneYet: break
-    gather results back to rank 0 and write to CSV</code>
+    gather results back to rank 0 and write to CSV
+```
 ---
 
 # Distributed Memory GPU Implementation (`GlobalGPU.cu`)
@@ -131,7 +139,8 @@ This hybrid implementation combines MPI with CUDA to distribute K-Means across m
 It's the most scalable implementation, targeting clusters with multiple GPUs.
 
 ## Pseudocode
-<code>function run_kmeans_distributed_gpu(data, k, dimensions, maxIterations):
+```
+function run_kmeans_distributed_gpu(data, k, dimensions, maxIterations):
     initialize MPI and GPU context
     distribute data using MPI
     allocate device memory for data, centroids, assignments
@@ -151,4 +160,5 @@ It's the most scalable implementation, targeting clusters with multiple GPUs.
         check convergence
         if converged:
             break
-    gather final cluster assignments and write CSV on rank 0</code>
+    gather final cluster assignments and write CSV on rank 0
+```
