@@ -26,7 +26,7 @@ Below is a list of who completed which parts of the project. We feel that there 
 - Added CMakeList.txt program for GPU code and implemented additional compilation directives w/ Joe
 - Worked on making libraries and versions compatible for GPU and CPU implementations on CHPC examples: MPICH, MPI, CUDA
 - Created utility files such as `SpotifyFrameReader.cpp` and `SpotifyFrameReader.hpp` to inject .csv data from the Kaggle project
-- Implemented `SpotifyFrame.hpp` object to represent the data coming in from the .csv data to be used throughout the program
+- Implemented `SpotifyFrame.h` object to represent the data coming in from the .csv data to be used throughout the program
 
 ---
 
