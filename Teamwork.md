@@ -1,4 +1,5 @@
 # Teamwork Report
+
 ---
 
 Below is a list of who completed which parts of the project. We feel that there was an even distribution of the workload. We collaborated well and had now issues working as a team.
@@ -18,7 +19,14 @@ Below is a list of who completed which parts of the project. We feel that there 
 
 ---
 
-## Hunter
+## Hunter Peart
+
+- Implemented `Global.cu` and `Global.cuh` algorithms
+- Implemented `Shared.cu` and `Shared.cuh` algorithms
+- Added CMakeList.txt program for GPU code and implemented additional compilation directives w/ Joe
+- Worked on making libraries and versions compatible for GPU and CPU implementations on CHPC examples: MPICH, MPI, CUDA
+- Created utility files such as `SpotifyFrameReader.cpp` and `SpotifyFrameReader.hpp` to inject .csv data from the Kaggle project
+- Implemented `SpotifyFrame.hpp` object to represent the data coming in from the .csv data to be used throughout the program
 
 ---
 
