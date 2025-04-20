@@ -19,7 +19,7 @@ This scaling study was ran on notch293
 | 16              | 53.223          | 3.310                           | 4.193                             | 16.082         | 12.696      | 100.51                       | 79.35                             |  
 | 32              | 53.223          | 1.990                           | 2.912                             | 26.750         | 18.281      | 83.59                        | 57.13                             |
 
-
+![Strong Scaling](./StrongScaling.png)
 
 
 ### Weak Scaling Study
@@ -32,6 +32,9 @@ For this week study, we used `k = 8`, `tolerance=1e-4`, and `max_iterations=100`
 | 2             | 25% / ~300,000    | 15.409     | 7.532      | 7.624   |
 | 4             | 50% / ~600,000    | 30.845     | 7.156      | 7.746   |
 | 8             | 100% / ~1,200,000 | 53.223     | 6.724      | 7.405   |
+
+
+![Week Scaling](./WeekScaling.png)
 
 ### GPU Implementation Analysis
 
