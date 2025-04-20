@@ -2,6 +2,10 @@
 
 ---
 
+## Project Layout
+
+The Scaling Study and GPU implementation analysis can be found in the `ScalingStudy.md` file. The description of our implementations is in `implementations.md`. Our teamwork report is in `Teamwork.md`. Instructions for loading modules, building the project, running the project, etc. can be found below.
+
 ## Instructions
 
 After cloning the repo, you will have to create a `data` folder in the root directory of the project. 
@@ -65,13 +69,13 @@ module load miniforge3/latest
 
 mamba install pandas numpy matplotlib
 ```
-After this, you should be good to go, but again refer to CHPCs documentation if you run into any issues.cd 
+After this, you should be good to go, but again refer to CHPCs documentation if you run into any issues.
 
 ---
 
 ### Building the Executable
 
-We use CMake to compile this project. From the `root` directory, navigate to the `build` directory.
+We use `CMake` to compile this project. From the `root` directory, navigate to the `build` directory.
 
 `cd build`
 
@@ -119,15 +123,22 @@ will perform if convergence is not reached earlier.It should be a positive integ
     | 4  | Shared Memory GPU      |
     | 5  | Distributed Memory GPU |
 
+
+Here is an example command for running the Serial implementation:
+
+`./class_project 3 100 0.0001 100 1`
+
 ***Note***: Your first time running the program, you will notice that reading the `data/tracks_features.csv` file takes a few minutes. After the program has ran once, it will save the track features as a binary file, and reading will be much faster.
 
-### Configuring Number of Threads (CPU)
+### Configuring Number of Threads/Ranks (CPU)
 
-TODO: Make it so that after picking an cpu implementation, the user is shown how many possible threads they can use and allow them to pick how many they can use
+If you wish to run the Shared Memory (OpenMP) implementation with a certain number of threads, use this command:
 
-### Configuring Block Size (GPU)
+`export OPENMP_NUM_THREADS=<number of threads>`
 
-Todo: After selecting a gpu implementation, the user can select the block size to use
+To run the Distributed Memory CPU (MPI) implementation with a certain number of ranks, use a command like:
+
+`mpirun n -<number of ranks> ./class_project 3 100 0.001 100 3`
 
 --- 
 
@@ -154,4 +165,6 @@ Follow the steps above to load the correct modules. Then navigate to the `root` 
 For example, to visualize the output of the serial implementation, the command becomes:
 
 `python3 visualize_clusters.py serial_results.csv`
+
+***Note***: *To keep execution time low, visualization is not run on the output. The user must run the above commands to generate a visualization*
 
