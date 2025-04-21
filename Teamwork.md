@@ -31,3 +31,10 @@ Below is a list of who completed which parts of the project. We feel that there 
 ---
 
 ## Andy
+
+- Implemented `DistributedCpu.h` file using MPI for distributed memory parallelism  
+- Wrote logic for scattering and gathering data using `MPI_Scatterv` and `MPI_Gatherv`  
+- Implemented centroid synchronization and convergence logic using `MPI_Allreduce` and `MPI_Bcast`  
+- Reconstructed flattened input/output vectors into structured `Point` objects for computation and result aggregation  
+- Created and wrote the `implementations.md` file summarizing all five algorithm implementations with pseudocode and descriptions
+
